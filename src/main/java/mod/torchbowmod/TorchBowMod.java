@@ -48,7 +48,7 @@ public class TorchBowMod
 				return torchbow;
 			}
 
-
+//master
 		};
 
 		EntityRegistry.registerModEntity(EntityTorch.class, "EntityTorch",3/*PlasticConfig.PlasticArrowEntityID*/, this, 60, 5, true);
