@@ -1,5 +1,7 @@
 package mod.torchbowmod;
 
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -46,7 +48,7 @@ public class RenderAnimationBow implements IItemRenderer {
 	// or third person.
 	// Credit to SanAndreasP on minecraftforge forums for this code.
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		EntityClientPlayerMP entity = (EntityClientPlayerMP) data[1];
+		AbstractClientPlayer entity = (AbstractClientPlayer) data[1];
 		ItemRenderer irInstance = this.mc.entityRenderer.itemRenderer;
 		GL11.glPopMatrix(); // prevents Forge from pre-translating the item
 		if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
@@ -79,7 +81,7 @@ public class RenderAnimationBow implements IItemRenderer {
 
 	// This actually renders an Icon to be worked with.
 	// All of this code is directly pulled from ItemRenderer.class
-	private void renderItem(EntityClientPlayerMP par1EntityLiving, ItemStack par2ItemStack, int par3) {
+	private void renderItem(AbstractClientPlayer par1EntityLiving, ItemStack par2ItemStack, int par3) {
 		{
 			// If you for whatever reason aren't registering icons with
 			// iconRegister, I'm assuming you'll need to change the code below.
