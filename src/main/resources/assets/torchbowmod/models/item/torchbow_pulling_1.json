@@ -1,0 +1,6 @@
+{
+    "parent": "torchbowmod:item/torchbow",
+    "textures": {
+        "layer0": "torchbowmod:item/torchbow_pulling_1"
+    }
+}

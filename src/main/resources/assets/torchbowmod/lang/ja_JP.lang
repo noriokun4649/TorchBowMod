@@ -1,4 +1,16 @@
 
 item.torchbow.name=松明弓
-itemGroup.TorchBowModTab=松明矢MOD
+itemGroup.TorchBowModTab=松明弓MOD
 death.attack.EntityTorch=%1$sは%2$sに松明を刺された！
+log.sb.check=StorageBox導入状況問い合わせ中・・・
+log.sb.load=StorageBox導入を確認。読み込み完了
+log.sb.error=StorageBox読み込みエラー
+log.sb.unload=StorageBox非導入。
+log.sg.check=Silent's Gems導入状況問い合わせ中・・・
+log.sg.load=Silent's Gems導入を確認。読み込み完了
+log.sg.error=Silent's Gems読み込みエラー
+log.sg.unload=Silent's Gems非導入。
+log.gc.check=Galacticraft導入状況問い合わせ中・・・
+log.gc.load=Galacticraft導入を確認。読み込み完了
+log.gc.error=Galacticraft読み込みエラー
+log.gc.unload=Galacticraft非導入。

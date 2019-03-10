@@ -1,0 +1,12 @@
+{
+    "type": "forge:ore_shapeless",
+    "group": "torchbowmod:torchbowmod",
+    "ingredients": [{
+        "item": "minecraft:bow"
+    }, {
+        "item": "minecraft:flint_and_steel"
+    }],
+    "result": {
+        "item": "torchbowmod:torchbow"
+    }
+}
