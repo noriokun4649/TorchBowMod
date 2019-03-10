@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:bow"
+        },
+        {
+            "item": "minecraft:flint_and_steel"
+        }
+    ],
+    "result": {
+        "item": "torchbowmod:torchbow",
+        "count": 1
+    }
+}
