@@ -1,21 +1,19 @@
 package mod.torchbowmod;
 
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,13 +22,14 @@ import org.apache.logging.log4j.Logger;
 public class TorchBowMod {
     public static final String MODID = "torchbowmod";
     public static Logger LOGGER = LogManager.getLogger("TorchBowMod");
-    public static ItemGroup TorchBowModTab = (new ItemGroup("TorchBowModTab") {
+    public static ItemGroup torchBowModTab = (new ItemGroup("torchBowModTab") {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(torchbow);
         }
     });
-    public static Item torchbow = new TorchBow(new Item.Properties().group(TorchBowModTab).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "torchbow"));
+    public static Item torchbow = new TorchBow(new Item.Properties().group(torchBowModTab).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "torchbow"));
+    public static Item multiTorch = new Item(new Item.Properties().group(torchBowModTab).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"multitorch"));
     public static EntityType<EntityTorch> EMERALD_ARROW;
 
     public TorchBowMod() {
@@ -46,14 +45,14 @@ public class TorchBowMod {
 
     private void initClient(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(EntityTorch.class, RenderTorch::new);
-        TorchBowModTab.createIcon();
+        torchBowModTab.createIcon();
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
-            event.getRegistry().register(torchbow);
+            event.getRegistry().registerAll(torchbow,multiTorch);
             LOGGER.info("HELLO from Register Item");
         }
 

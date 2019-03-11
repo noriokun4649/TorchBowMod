@@ -8,16 +8,19 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArrow;
+import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
+import static mod.torchbowmod.TorchBowMod.multiTorch;
 
-public class TorchBow extends Item{
+public class TorchBow extends Item {
 
     public TorchBow(Properties properties) {
         super(properties);
@@ -51,7 +54,7 @@ public class TorchBow extends Item{
     }
 
     protected boolean isArrow(ItemStack stack) {
-        return stack.getItem() == Blocks.TORCH.asItem();
+        return stack.getItem() == Blocks.TORCH.asItem() || stack.getItem() == multiTorch;
     }
 
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
@@ -74,32 +77,18 @@ public class TorchBow extends Item{
                 if ((double) f >= 0.1D) {
                     boolean flag1 = entityplayer.abilities.isCreativeMode || itemstack.getItem() instanceof ItemArrow && ((ItemArrow) itemstack.getItem()).isInfinite(itemstack, stack, entityplayer);
                     if (!worldIn.isRemote) {
-                        EntityTorch entityarrow = new EntityTorch(EMERALD_ARROW, entityplayer, worldIn);
-                        entityarrow.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, f * 3.0F, 1.0F);
-                        if (f == 1.0F) {
-                            entityarrow.setIsCritical(true);
+                        float size = 10;
+                        shootTorch(entityplayer.rotationPitch, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
+                        if (itemstack.getItem() == multiTorch) {
+                            shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw + size, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw - size, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch + size, entityplayer.rotationYaw + size, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch + size, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch + size, entityplayer.rotationYaw - size, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch, entityplayer.rotationYaw + size, entityplayer, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(entityplayer.rotationPitch, entityplayer.rotationYaw - size, entityplayer, worldIn, itemstack, stack, flag1, f);
                         }
-
-                        int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
-                        if (j > 0) {
-                            entityarrow.setDamage(entityarrow.getDamage() + (double) j * 0.5D + 0.5D);
-                        }
-
-                        int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
-                        if (k > 0) {
-                            entityarrow.setKnockbackStrength(k);
-                        }
-
-                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
-                            entityarrow.setFire(100);
-                        }
-
-                        stack.damageItem(1, entityplayer);
-                        if (flag1 || entityplayer.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
-                            entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
-                        }
-
-                        worldIn.spawnEntity(entityarrow);
                     }
 
                     worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
@@ -115,6 +104,36 @@ public class TorchBow extends Item{
             }
         }
 
+    }
+
+    private void shootTorch(float offsetPitch, float offsetYaw, EntityPlayer entityplayer, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
+        EntityTorch entityarrow = new EntityTorch(EMERALD_ARROW, entityplayer, worldIn);
+        entityarrow.shoot(entityplayer, offsetPitch, offsetYaw, 0.0F, f * 3.0F, 1.0F);
+
+        if (f == 1.0F) {
+            entityarrow.setIsCritical(true);
+        }
+
+        int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+        if (j > 0) {
+            entityarrow.setDamage(entityarrow.getDamage() + (double) j * 0.5D + 0.5D);
+        }
+
+        int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+        if (k > 0) {
+            entityarrow.setKnockbackStrength(k);
+        }
+
+        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
+            entityarrow.setFire(100);
+        }
+
+        stack.damageItem(1, entityplayer);
+        if (flag1 || entityplayer.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
+            entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+        }
+
+        worldIn.spawnEntity(entityarrow);
     }
 
     public static float getArrowVelocity(int charge) {

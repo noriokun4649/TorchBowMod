@@ -1,6 +1,7 @@
 {
   "item.torchbowmod.torchbow": "松明弓",
-  "itemGroup.TorchBowModTab": "松明弓MOD",
+  "item.torchbowmod.multitorch": "複数の松明",
+  "itemGroup.torchBowModTab": "松明弓MOD",
   "death.attack.EntityTorch": "%1$sは%2$sに松明を刺された！",
   "log.sb.check": "StorageBox導入状況問い合わせ中・・・",
   "log.sb.load": "StorageBox導入を確認。読み込み完了",
