@@ -1,18 +1,13 @@
 package mod.torchbowmod;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArrow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.item.*;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -36,11 +31,11 @@ public class TorchBow extends Item {
         });
     }
 
-    private ItemStack findAmmo(EntityPlayer player) {
-        if (this.isArrow(player.getHeldItem(EnumHand.OFF_HAND))) {
-            return player.getHeldItem(EnumHand.OFF_HAND);
-        } else if (this.isArrow(player.getHeldItem(EnumHand.MAIN_HAND))) {
-            return player.getHeldItem(EnumHand.MAIN_HAND);
+    private ItemStack findAmmo(PlayerEntity player) {
+        if (this.isArrow(player.getHeldItem(Hand.OFF_HAND))) {
+            return player.getHeldItem(Hand.OFF_HAND);
+        } else if (this.isArrow(player.getHeldItem(Hand.MAIN_HAND))) {
+            return player.getHeldItem(Hand.MAIN_HAND);
         } else {
             for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
                 ItemStack itemstack = player.inventory.getStackInSlot(i);
@@ -57,9 +52,9 @@ public class TorchBow extends Item {
         return stack.getItem() == Blocks.TORCH.asItem() || stack.getItem() == multiTorch;
     }
 
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
-        if (entityLiving instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) entityLiving;
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (entityLiving instanceof PlayerEntity) {
+            PlayerEntity entityplayer = (PlayerEntity) entityLiving;
             boolean flag = entityplayer.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
             ItemStack itemstack = findAmmo(entityplayer);
             int i = this.getUseDuration(stack) - timeLeft;
@@ -75,7 +70,7 @@ public class TorchBow extends Item {
 
                 float f = getArrowVelocity(i);
                 if ((double) f >= 0.1D) {
-                    boolean flag1 = entityplayer.abilities.isCreativeMode || itemstack.getItem() instanceof ItemArrow && ((ItemArrow) itemstack.getItem()).isInfinite(itemstack, stack, entityplayer);
+                    boolean flag1 = entityplayer.abilities.isCreativeMode || itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, entityplayer);
                     if (!worldIn.isRemote) {
                         float size = 10;
                         shootTorch(entityplayer.rotationPitch, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
@@ -91,7 +86,7 @@ public class TorchBow extends Item {
                         }
                     }
 
-                    worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                    worldIn.playSound((PlayerEntity) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!flag1 && !entityplayer.abilities.isCreativeMode) {
                         itemstack.shrink(1);
                         if (itemstack.isEmpty()) {
@@ -99,14 +94,14 @@ public class TorchBow extends Item {
                         }
                     }
 
-                    entityplayer.addStat(StatList.ITEM_USED.get(this));
+                    entityplayer.addStat(Stats.ITEM_USED.get(this));
                 }
             }
         }
 
     }
 
-    private void shootTorch(float offsetPitch, float offsetYaw, EntityPlayer entityplayer, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
+    private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entityplayer, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
         EntityTorch entityarrow = new EntityTorch(EMERALD_ARROW, entityplayer, worldIn);
         entityarrow.shoot(entityplayer, offsetPitch, offsetYaw, 0.0F, f * 3.0F, 1.0F);
 
@@ -128,12 +123,14 @@ public class TorchBow extends Item {
             entityarrow.setFire(100);
         }
 
-        stack.damageItem(1, entityplayer);
+        stack.damageItem(1, entityplayer, (p_220009_1_) -> {
+            p_220009_1_.sendBreakAnimation(entityplayer.getActiveHand());
+        });
         if (flag1 || entityplayer.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
-            entityarrow.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+            entityarrow.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
         }
 
-        worldIn.spawnEntity(entityarrow);
+        worldIn.addEntity(entityarrow);
     }
 
     public static float getArrowVelocity(int charge) {
@@ -150,21 +147,22 @@ public class TorchBow extends Item {
         return 72000;
     }
 
-    public EnumAction getUseAction(ItemStack stack) {
-        return EnumAction.BOW;
+    public UseAction getUseAction(ItemStack stack) {
+        return UseAction.BOW;
     }
 
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
-        boolean flag = !this.findAmmo(playerIn).isEmpty();
-        ActionResult<ItemStack> ret = ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
-        if (ret != null) {
-            return ret;
-        } else if (!playerIn.abilities.isCreativeMode && !flag) {
-            return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);
+        boolean flag = !playerIn.func_213356_f(itemstack).isEmpty();
+
+        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
+        if (ret != null) return ret;
+
+        if (!playerIn.abilities.isCreativeMode && !flag) {
+            return flag ? new ActionResult<>(ActionResultType.PASS, itemstack) : new ActionResult<>(ActionResultType.FAIL, itemstack);
         } else {
             playerIn.setActiveHand(handIn);
-            return new ActionResult(EnumActionResult.SUCCESS, itemstack);
+            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
         }
     }
 }

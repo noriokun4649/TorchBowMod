@@ -1,66 +1,65 @@
 package mod.torchbowmod;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBush;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BushBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
-import static net.minecraft.block.BlockTorchWall.HORIZONTAL_FACING;
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
+import static net.minecraft.util.Direction.*;
 
-public class EntityTorch extends EntityArrow {
+public class EntityTorch extends ArrowEntity {
     private int xTile;
     private int yTile;
     private int zTile;
     @Nullable
-    private IBlockState inBlockState;
+    private BlockState inBlockState;
     private double damage;
 
-    public EntityTorch(EntityType<?> type, World worldIn) {
+    public EntityTorch(EntityType<? extends ArrowEntity> type, World worldIn) {
         super(type, worldIn);
         this.xTile = -1;
         this.yTile = -1;
         this.zTile = -1;
         this.pickupStatus = EntityTorch.PickupStatus.DISALLOWED;
         this.damage = 2.0D;
-        this.setSize(0.5F, 0.5F);
+        //this.setSize(0.5F, 0.5F);
     }
 
     public EntityTorch(World world) {
         super(EMERALD_ARROW, world);
     }
 
-    public EntityTorch(EntityType<?> type, double x, double y, double z, World worldIn) {
+    public EntityTorch(EntityType<? extends ArrowEntity> type, double x, double y, double z, World worldIn) {
         this(type, worldIn);
         this.setPosition(x, y, z);
     }
 
-    public EntityTorch(EntityType<?> type, EntityLivingBase shooter, World worldIn) {
+    public EntityTorch(EntityType<? extends ArrowEntity> type, LivingEntity shooter, World worldIn) {
         this(type, shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ, worldIn);
-        func_212361_a(shooter);
+        this.setShooter(shooter);
 
-        if (shooter instanceof EntityPlayer) {
+        if (shooter instanceof PlayerEntity) {
             this.pickupStatus = EntityTorch.PickupStatus.ALLOWED;
         }
     }
 
     @Override
-    protected void onHitEntity(RayTraceResult p_203046_1_) {
-        super.onHitEntity(p_203046_1_);
-        Entity entity = p_203046_1_.entity;
+    protected void func_213868_a(EntityRayTraceResult p_213868_1_) {
+        super.func_213868_a(p_213868_1_);
+        Entity entity = p_213868_1_.getEntity();
         //String type = EntityList.getEntityString(entity);//文字に変換
         //if (type != null && !type.equals("lmmx.LittleMaidX")) {//リトルメイド以外だったら
         entity.setFire(100);//火を付ける
@@ -73,33 +72,37 @@ public class EntityTorch extends EntityArrow {
     @Override
     protected void onHit(RayTraceResult raytraceResultIn) {
         super.onHit(raytraceResultIn);
-        if (raytraceResultIn.entity == null) {
-            BlockPos blockpos = raytraceResultIn.getBlockPos();
-            this.xTile = blockpos.getX();
-            this.yTile = blockpos.getY();
-            this.zTile = blockpos.getZ();
-            IBlockState iblockstate = this.world.getBlockState(blockpos);
-            this.inBlockState = iblockstate;
-            this.motionX = (double) ((float) (raytraceResultIn.hitVec.x - this.posX));
-            this.motionY = (double) ((float) (raytraceResultIn.hitVec.y - this.posY));
-            this.motionZ = (double) ((float) (raytraceResultIn.hitVec.z - this.posZ));
-            float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * 20.0F;
-            this.posX -= this.motionX / (double) f;
-            this.posY -= this.motionY / (double) f;
-            this.posZ -= this.motionZ / (double) f;
+        RayTraceResult.Type raytraceresult$type = raytraceResultIn.getType();
+        if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
+            this.func_213868_a((EntityRayTraceResult)raytraceResultIn);
+        } else if (raytraceresult$type == RayTraceResult.Type.BLOCK) {
+            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceResultIn;
+            BlockState blockstate = this.world.getBlockState(blockraytraceresult.getPos());
+            this.inBlockState = blockstate;
+            Vec3d vec3d = blockraytraceresult.getHitVec().subtract(this.posX, this.posY, this.posZ);
+            this.setMotion(vec3d);
+            Vec3d vec3d1 = vec3d.normalize().scale((double)0.05F);
+            this.posX -= vec3d1.x;
+            this.posY -= vec3d1.y;
+            this.posZ -= vec3d1.z;
             this.playSound(this.getHitGroundSound(), 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
             this.inGround = true;
             this.arrowShake = 7;
             this.setIsCritical(false);
-
-            if (!iblockstate.isAir(this.world, blockpos)) {
+            this.func_213872_b((byte)0);
+            this.func_213869_a(SoundEvents.ENTITY_ARROW_HIT);
+            this.func_213865_o(false);
+            //this.func_213870_w();
+            blockstate.onProjectileCollision(this.world, blockstate, blockraytraceresult, this);
+            BlockPos blockpos = blockraytraceresult.getPos();
+            if (!blockstate.isAir(this.world, blockpos)) {
                 this.inBlockState.onEntityCollision(this.world, blockpos, this);
                 if (!world.isRemote) {
                     int x = this.xTile;
                     int y = this.yTile;
                     int z = this.zTile;
                     World world = this.world;
-                    IBlockState torch_state = Blocks.TORCH.getDefaultState();
+                    BlockState torch_state = Blocks.TORCH.getDefaultState();
                     BlockPos up_pos = new BlockPos(x, y + 1, z);
                     if (isBlockAIR(up_pos)) {
                         world.setBlockState(up_pos, torch_state);
@@ -140,6 +143,7 @@ public class EntityTorch extends EntityArrow {
                 }
             }
         }
+
     }
 
     private void setDead() {
@@ -153,7 +157,7 @@ public class EntityTorch extends EntityArrow {
 
     private boolean isBlockAIR(BlockPos pos) {
         Block getBlock = this.world.getBlockState(pos).getBlock();
-        if (getBlock instanceof BlockBush) return true;
+        if (getBlock instanceof BushBlock) return true;
         Block[] a = {Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
         for (Block traget : a) {
             if (getBlock == traget) return true;
