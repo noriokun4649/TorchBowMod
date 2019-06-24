@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "torchbowmod:multitorch"
+    }
+  ],
+  "result": {
+    "item": "minecraft:torch",
+    "count": 9
+  }
+}
