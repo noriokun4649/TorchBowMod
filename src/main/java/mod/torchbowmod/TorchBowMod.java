@@ -29,7 +29,7 @@ public class TorchBowMod {
         }
     });
     public static Item torchbow = new TorchBow(new Item.Properties().group(torchBowModTab).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "torchbow"));
-    public static Item multiTorch = new Item(new Item.Properties().group(torchBowModTab).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"multitorch"));
+    public static Item multiTorch = new Item(new Item.Properties().group(torchBowModTab).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "multitorch"));
     public static EntityType<EntityTorch> EMERALD_ARROW;
 
     public TorchBowMod() {
@@ -52,7 +52,7 @@ public class TorchBowMod {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(torchbow,multiTorch);
+            event.getRegistry().registerAll(torchbow, multiTorch);
             LOGGER.info("HELLO from Register Item");
         }
 
@@ -63,6 +63,5 @@ public class TorchBowMod {
             event.getRegistry().register(EMERALD_ARROW);
         }
     }
-
 }
 

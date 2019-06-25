@@ -2,6 +2,7 @@ package mod.torchbowmod;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -92,7 +93,7 @@ public class EntityTorch extends EntityArrow {
             this.arrowShake = 7;
             this.setIsCritical(false);
 
-            if (!iblockstate.isAir(this.world, blockpos)) {
+            if (iblockstate.getMaterial() != Material.AIR) {
                 this.inBlockState.onEntityCollision(this.world, blockpos, this);
                 if (!world.isRemote) {
                     int x = this.xTile;
@@ -154,7 +155,7 @@ public class EntityTorch extends EntityArrow {
     private boolean isBlockAIR(BlockPos pos) {
         Block getBlock = this.world.getBlockState(pos).getBlock();
         if (getBlock instanceof BlockBush) return true;
-        Block[] a = {Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
+        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
         for (Block traget : a) {
             if (getBlock == traget) return true;
         }
