@@ -2,26 +2,23 @@ package mod.torchbowmod;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
-public class RenderTorch<T extends EntityTorch> extends Render<T>
-{
+public class RenderTorch<T extends EntityTorch> extends Render<T> {
     private static final ResourceLocation TorchTextures = new ResourceLocation("torchbowmod:textures/entity/torch.png");
     //private static final String __OBFID = "CL_00000978";
 
-    public RenderTorch(RenderManager renderManagerIn)
-    {
+    public RenderTorch(RenderManager renderManagerIn) {
         super(renderManagerIn);
     }
 
@@ -32,13 +29,12 @@ public class RenderTorch<T extends EntityTorch> extends Render<T>
      * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
      */
     @Override
-    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
-    {
+    public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
         this.bindEntityTexture(entity);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();
-        GlStateManager.translate((float)x, (float)y, (float)z);
+        GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.rotate(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F, 1.0F);
         Tessellator tessellator = Tessellator.getInstance();
@@ -54,10 +50,9 @@ public class RenderTorch<T extends EntityTorch> extends Render<T>
         float f7 = 0.3125F;
         float f8 = 0.05625F;
         GlStateManager.enableRescaleNormal();
-        float f9 = (float)entity.arrowShake - partialTicks;
+        float f9 = (float) entity.arrowShake - partialTicks;
 
-        if (f9 > 0.0F)
-        {
+        if (f9 > 0.0F) {
             float f10 = -MathHelper.sin(f9 * 3.0F) * f9;
             GlStateManager.rotate(f10, 0.0F, 0.0F, 1.0F);
         }
@@ -66,8 +61,7 @@ public class RenderTorch<T extends EntityTorch> extends Render<T>
         GlStateManager.scale(0.05625F, 0.05625F, 0.05625F);
         GlStateManager.translate(-4.0F, 0.0F, 0.0F);
 
-        if (this.renderOutlines)
-        {
+        if (this.renderOutlines) {
             GlStateManager.enableColorMaterial();
             GlStateManager.enableOutlineMode(this.getTeamColor(entity));
         }
@@ -87,8 +81,7 @@ public class RenderTorch<T extends EntityTorch> extends Render<T>
         bufferbuilder.pos(-7.0D, -2.0D, -2.0D).tex(0.0D, 0.3125D).endVertex();
         tessellator.draw();
 
-        for (int j = 0; j < 4; ++j)
-        {
+        for (int j = 0; j < 4; ++j) {
             GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
             GlStateManager.glNormal3f(0.0F, 0.0F, 0.05625F);
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
@@ -99,8 +92,7 @@ public class RenderTorch<T extends EntityTorch> extends Render<T>
             tessellator.draw();
         }
 
-        if (this.renderOutlines)
-        {
+        if (this.renderOutlines) {
             GlStateManager.disableOutlineMode();
             GlStateManager.disableColorMaterial();
         }

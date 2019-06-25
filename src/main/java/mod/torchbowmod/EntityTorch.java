@@ -2,39 +2,33 @@ package mod.torchbowmod;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
-import java.util.List;
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockTorch;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SPacketChangeGameState;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.DataFixer;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 import static net.minecraft.block.BlockTorch.FACING;
 import static net.minecraft.util.EnumFacing.NORTH;
@@ -101,11 +95,11 @@ public class EntityTorch extends Entity implements IProjectile {
         }
     }
 
-    public Block getSetingBlock(){
+    public Block getSetingBlock() {
         return setingBlock;
     }
 
-    public void setSetingBlock(Block block){
+    public void setSetingBlock(Block block) {
         setingBlock = block;
     }
 
@@ -345,7 +339,7 @@ public class EntityTorch extends Entity implements IProjectile {
         if (entity != null) {
             String type = EntityList.getEntityString(entity);//文字に変換
 
-            if (type != null && !type.equals("lmmx.LittleMaidX" ) && getSetingBlock() == Blocks.TORCH) {//リトルメイド以外かつ松明だったら
+            if (type != null && !type.equals("lmmx.LittleMaidX") && getSetingBlock() == Blocks.TORCH) {//リトルメイド以外かつ松明だったら
                 entity.setFire(100);//火を付ける
             }
             float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
@@ -372,7 +366,7 @@ public class EntityTorch extends Entity implements IProjectile {
                     EntityLivingBase entitylivingbase = (EntityLivingBase) entity;
 
                     //if (!this.world.isRemote) {
-                        //entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
+                    //entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
                     //}
 
                     if (this.knockbackStrength > 0) {
@@ -391,7 +385,7 @@ public class EntityTorch extends Entity implements IProjectile {
                     this.arrowHit(entitylivingbase);
 
                     //if (this.shootingEntity != null && entitylivingbase != this.shootingEntity && entitylivingbase instanceof EntityPlayer && this.shootingEntity instanceof EntityPlayerMP) {
-                       // ((EntityPlayerMP) this.shootingEntity).connection.sendPacket(new SPacketChangeGameState(6, 0.0F));
+                    // ((EntityPlayerMP) this.shootingEntity).connection.sendPacket(new SPacketChangeGameState(6, 0.0F));
                     //}
                 }
 
