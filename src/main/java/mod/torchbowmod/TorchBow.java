@@ -10,14 +10,17 @@ import net.minecraft.item.*;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.function.Predicate;
 
 import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
 import static mod.torchbowmod.TorchBowMod.multiTorch;
+import static net.minecraft.item.BowItem.getArrowVelocity;
 
 public class TorchBow extends ShootableItem {
+    public static final Predicate<ItemStack> TORCH = (p_220002_0_) -> {
+        return p_220002_0_.getItem() == Blocks.TORCH.asItem() || p_220002_0_.getItem() == multiTorch;
+    };
 
     public TorchBow(Properties properties) {
         super(properties);
@@ -35,11 +38,7 @@ public class TorchBow extends ShootableItem {
 
     @Override
     public Predicate<ItemStack> getInventoryAmmoPredicate() {
-        return ARROWS;
-    }
-
-    protected boolean isArrow(ItemStack stack) {
-        return stack.getItem() == Blocks.TORCH.asItem() || stack.getItem() == multiTorch;
+        return TORCH;
     }
 
     @Override
@@ -62,8 +61,19 @@ public class TorchBow extends ShootableItem {
                 if (!((double)f < 0.1D)) {
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem)itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
+                        float size = 10;
                         EntityTorch abstractedly = new EntityTorch(EMERALD_ARROW, entityLiving, worldIn);
                         abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                        if (itemstack.getItem() == multiTorch) {
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
+                            abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
+                        }
                         if (f == 1.0F) {
                             abstractedly.setIsCritical(true);
                         }
@@ -88,11 +98,10 @@ public class TorchBow extends ShootableItem {
                         if (flag1 || playerentity.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
                             abstractedly.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
                         }
-
                         worldIn.addEntity(abstractedly);
                     }
 
-                    worldIn.playSound((PlayerEntity)null, playerentity.posX, playerentity.posY, playerentity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                    worldIn.playSound((PlayerEntity) entityLiving, playerentity.posX, playerentity.posY, playerentity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!flag1 && !playerentity.abilities.isCreativeMode) {
                         itemstack.shrink(1);
                         if (itemstack.isEmpty()) {
@@ -104,17 +113,6 @@ public class TorchBow extends ShootableItem {
                 }
             }
         }
-    }
-
-
-    public static float getArrowVelocity(int charge) {
-        float f = (float) charge / 20.0F;
-        f = (f * f + f * 2.0F) / 3.0F;
-        if (f > 1.0F) {
-            f = 1.0F;
-        }
-
-        return f;
     }
 
     public int getUseDuration(ItemStack stack) {
