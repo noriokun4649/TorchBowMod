@@ -147,7 +147,7 @@ public class EntityTorch extends ArrowEntity {
     private boolean isBlockAIR(BlockPos pos) {
         Block getBlock = this.world.getBlockState(pos).getBlock();
         if (getBlock instanceof BushBlock) return true;
-        Block[] a = {Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
+        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
         for (Block traget : a) {
             if (getBlock == traget) return true;
         }
