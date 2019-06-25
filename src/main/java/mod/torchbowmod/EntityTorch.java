@@ -1,5 +1,6 @@
 package mod.torchbowmod;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -8,8 +9,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potions;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -20,7 +23,7 @@ import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
 import static net.minecraft.util.Direction.*;
 
-public class EntityTorch extends ArrowEntity {
+public class EntityTorch extends AbstractArrowEntity {
     private int xTile;
     private int yTile;
     private int zTile;
@@ -28,7 +31,7 @@ public class EntityTorch extends ArrowEntity {
     private BlockState inBlockState;
     private double damage;
 
-    public EntityTorch(EntityType<? extends ArrowEntity> type, World worldIn) {
+    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, World worldIn) {
         super(type, worldIn);
         this.xTile = -1;
         this.yTile = -1;
@@ -38,16 +41,12 @@ public class EntityTorch extends ArrowEntity {
         //this.setSize(0.5F, 0.5F);
     }
 
-    public EntityTorch(World world) {
-        super(EMERALD_ARROW, world);
-    }
-
-    public EntityTorch(EntityType<? extends ArrowEntity> type, double x, double y, double z, World worldIn) {
+    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, double x, double y, double z, World worldIn) {
         this(type, worldIn);
         this.setPosition(x, y, z);
     }
 
-    public EntityTorch(EntityType<? extends ArrowEntity> type, LivingEntity shooter, World worldIn) {
+    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, LivingEntity shooter, World worldIn) {
         this(type, shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ, worldIn);
         this.setShooter(shooter);
 
