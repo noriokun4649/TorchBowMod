@@ -44,7 +44,7 @@ public class TorchBow extends ShootableItem {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
         if (entityLiving instanceof PlayerEntity) {
-            PlayerEntity playerentity = (PlayerEntity)entityLiving;
+            PlayerEntity playerentity = (PlayerEntity) entityLiving;
             boolean flag = playerentity.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
             ItemStack itemstack = playerentity.func_213356_f(stack);
 
@@ -58,8 +58,8 @@ public class TorchBow extends ShootableItem {
                 }
 
                 float f = getArrowVelocity(i);
-                if (!((double)f < 0.1D)) {
-                    boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem)itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
+                if (!((double) f < 0.1D)) {
+                    boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
                         float size = 10;
                         EntityTorch abstractedly = new EntityTorch(EMERALD_ARROW, entityLiving, worldIn);
@@ -80,7 +80,7 @@ public class TorchBow extends ShootableItem {
 
                         int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
                         if (j > 0) {
-                            abstractedly.setDamage(abstractedly.getDamage() + (double)j * 0.5D + 0.5D);
+                            abstractedly.setDamage(abstractedly.getDamage() + (double) j * 0.5D + 0.5D);
                         }
 
                         int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);

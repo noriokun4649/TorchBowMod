@@ -3,12 +3,9 @@ package mod.torchbowmod;
 
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,11 +15,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,8 +29,12 @@ public class TorchBowMod {
             return new ItemStack(torchbow);
         }
     });
-    public static Item torchbow = new TorchBow(new Item.Properties().group(torchBowModTab).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "torchbow"));
-    public static Item multiTorch = new Item(new Item.Properties().group(torchBowModTab).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID,"multitorch"));
+    public static Item torchbow = new TorchBow(new Item.Properties()
+            .group(torchBowModTab).defaultMaxDamage(384))
+            .setRegistryName(new ResourceLocation(MODID, "torchbow"));
+    public static Item multiTorch = new Item(new Item.Properties()
+            .group(torchBowModTab).maxStackSize(64))
+            .setRegistryName(new ResourceLocation(MODID, "multitorch"));
     public static EntityType<EntityTorch> EMERALD_ARROW;
 
     public TorchBowMod() {
@@ -59,8 +56,8 @@ public class TorchBowMod {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void onItemsRegistry(RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(torchbow,multiTorch);
+        public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
+            event.getRegistry().registerAll(torchbow, multiTorch);
             LOGGER.info("HELLO from Register Item");
         }
 
@@ -70,7 +67,7 @@ public class TorchBowMod {
                     .setTrackingRange(60)
                     .setUpdateInterval(5)
                     .setShouldReceiveVelocityUpdates(true)
-                    .size(0.5F,0.5F)
+                    .size(0.5F, 0.5F)
                     .build(MODID + ":entitytorch");
             EMERALD_ARROW.setRegistryName(new ResourceLocation(MODID, "entitytorch"));
             event.getRegistry().register(EMERALD_ARROW);

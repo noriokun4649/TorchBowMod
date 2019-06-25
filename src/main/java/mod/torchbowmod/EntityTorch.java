@@ -1,6 +1,5 @@
 package mod.torchbowmod;
 
-import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -12,14 +11,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
 import static net.minecraft.util.Direction.*;
 
@@ -66,14 +63,14 @@ public class EntityTorch extends ArrowEntity {
         super.onHit(raytraceResultIn);
         RayTraceResult.Type raytraceresult$type = raytraceResultIn.getType();
         if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
-            this.func_213868_a((EntityRayTraceResult)raytraceResultIn);
+            this.func_213868_a((EntityRayTraceResult) raytraceResultIn);
         } else if (raytraceresult$type == RayTraceResult.Type.BLOCK) {
-            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceResultIn;
+            BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) raytraceResultIn;
             BlockState blockstate = this.world.getBlockState(blockraytraceresult.getPos());
             this.inBlockState = blockstate;
             Vec3d vec3d = blockraytraceresult.getHitVec().subtract(this.posX, this.posY, this.posZ);
             this.setMotion(vec3d);
-            Vec3d vec3d1 = vec3d.normalize().scale((double)0.05F);
+            Vec3d vec3d1 = vec3d.normalize().scale((double) 0.05F);
             this.posX -= vec3d1.x;
             this.posY -= vec3d1.y;
             this.posZ -= vec3d1.z;
@@ -81,7 +78,7 @@ public class EntityTorch extends ArrowEntity {
             this.inGround = true;
             this.arrowShake = 7;
             this.setIsCritical(false);
-            this.func_213872_b((byte)0);
+            this.func_213872_b((byte) 0);
             this.func_213869_a(SoundEvents.ENTITY_ARROW_HIT);
             this.func_213865_o(false);
             //this.func_213870_w();
