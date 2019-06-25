@@ -383,7 +383,7 @@ public class EntityTorch extends Entity implements IProjectile ,IThrowableEntity
 
 							if (!this.worldObj.isRemote)
 							{
-								entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
+								//entitylivingbase.setArrowCountInEntity(entitylivingbase.getArrowCountInEntity() + 1);
 							}
 
 							if (this.knockbackStrength > 0)
@@ -408,7 +408,7 @@ public class EntityTorch extends Entity implements IProjectile ,IThrowableEntity
 							}
 						}
 
-						this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+						//this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 
 						if (!(movingobjectposition.entityHit instanceof EntityEnderman))
 						{

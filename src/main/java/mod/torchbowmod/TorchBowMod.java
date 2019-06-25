@@ -20,12 +20,12 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = TorchBowMod.MODID,name = TorchBowMod.name,  version = TorchBowMod.VERSION)
+//@Mod(modid = TorchBowMod.MODID,name = TorchBowMod.name,  version = TorchBowMod.VERSION)
 public class TorchBowMod
 {
 	public static final String MODID = "TorchBowMod";
 	public static final String name = "TorchBowMod";
-	public static final String VERSION = "1.6";
+	public static final String VERSION = "1.8";
 	public static Logger loggers = LogManager.getLogger("TorchBowMod");
 	@SidedProxy(clientSide = "mod.torchbowmod.ClientProxy", serverSide = "mod.torchbowmod.ServerProxy")
 	public static CommonProxy proxy;

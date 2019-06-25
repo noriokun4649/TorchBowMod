@@ -127,16 +127,16 @@ public class TorchBow extends Item
 	}
 	/***
 	 * アイテムからアイテムスタック取得。
-	 * @param プレイヤ
-	 * @param アイテム
+	 * @param player
+	 * @param item
 	 * @return　ItemStack
 	 */
-	private ItemStack getStack(EntityPlayer p_77615_3_,Item item){
-		for (int i = 0; i < p_77615_3_.inventory.mainInventory.length; ++i)
+	private ItemStack getStack(EntityPlayer player,Item item){
+		for (int i = 0; i < player.inventory.mainInventory.length; ++i)
 		{
-			if (p_77615_3_.inventory.mainInventory[i] != null && p_77615_3_.inventory.mainInventory[i].getItem() == item/*TorchBowMod.StorageBox*/)
+			if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].getItem() == item/*TorchBowMod.StorageBox*/)
 			{
-				ItemStack itemstack = p_77615_3_.inventory.mainInventory[i];
+				ItemStack itemstack = player.inventory.mainInventory[i];
 				if (itemstack != null){//アイテムスタックがからじゃなかったら
 					if (itemstack.getTagCompound() == null){//NBTがNullだったら
 						itemstack.setTagCompound(new NBTTagCompound());//新しい空のNBTを書き込む
