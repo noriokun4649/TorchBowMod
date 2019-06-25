@@ -62,43 +62,17 @@ public class TorchBow extends ShootableItem {
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
                         float size = 10;
-                        EntityTorch abstractedly = new EntityTorch(EMERALD_ARROW, entityLiving, worldIn);
-                        abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
+                        shootTorch(playerentity.rotationPitch, playerentity.rotationYaw ,playerentity,entityLiving,worldIn,itemstack,stack,flag1,f);
                         if (itemstack.getItem() == multiTorch) {
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch - size, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch + size, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw + size, 0.0F, f * 3.0F, 1.0F);
-                            abstractedly.shoot(playerentity, playerentity.rotationPitch, playerentity.rotationYaw - size, 0.0F, f * 3.0F, 1.0F);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw - size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw - size, playerentity,entityLiving, worldIn, itemstack, stack, flag1, f);
                         }
-                        if (f == 1.0F) {
-                            abstractedly.setIsCritical(true);
-                        }
-
-                        int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
-                        if (j > 0) {
-                            abstractedly.setDamage(abstractedly.getDamage() + (double) j * 0.5D + 0.5D);
-                        }
-
-                        int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
-                        if (k > 0) {
-                            abstractedly.setKnockbackStrength(k);
-                        }
-
-                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
-                            abstractedly.setFire(100);
-                        }
-
-                        stack.damageItem(1, playerentity, (p_220009_1_) -> {
-                            p_220009_1_.sendBreakAnimation(playerentity.getActiveHand());
-                        });
-                        if (flag1 || playerentity.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
-                            abstractedly.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
-                        }
-                        worldIn.addEntity(abstractedly);
                     }
 
                     worldIn.playSound((PlayerEntity) entityLiving, playerentity.posX, playerentity.posY, playerentity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
@@ -113,6 +87,35 @@ public class TorchBow extends ShootableItem {
                 }
             }
         }
+    }
+    private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entitle,LivingEntity livingEntity, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
+        EntityTorch abstractedly = new EntityTorch(EMERALD_ARROW, livingEntity, worldIn);
+        abstractedly.shoot(entitle, offsetPitch, offsetYaw, 0.0F, f * 3.0F, 1.0F);
+        if (f == 1.0F) {
+            abstractedly.setIsCritical(true);
+        }
+
+        int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+        if (j > 0) {
+            abstractedly.setDamage(abstractedly.getDamage() + (double) j * 0.5D + 0.5D);
+        }
+
+        int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+        if (k > 0) {
+            abstractedly.setKnockbackStrength(k);
+        }
+
+        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
+            abstractedly.setFire(100);
+        }
+
+        stack.damageItem(1, entitle, (p_220009_1_) -> {
+            p_220009_1_.sendBreakAnimation(entitle.getActiveHand());
+        });
+        if (flag1 || entitle.abilities.isCreativeMode && (itemstack.getItem() == Blocks.TORCH.asItem())) {
+            abstractedly.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+        }
+        worldIn.addEntity(abstractedly);
     }
 
     public int getUseDuration(ItemStack stack) {
