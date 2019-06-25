@@ -23,30 +23,23 @@ import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
 import static net.minecraft.util.Direction.*;
 
-public class EntityTorch extends AbstractArrowEntity {
-    private int xTile;
-    private int yTile;
-    private int zTile;
+public class EntityTorch extends ArrowEntity {
     @Nullable
     private BlockState inBlockState;
     private double damage;
 
-    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, World worldIn) {
+    public EntityTorch(EntityType<? extends EntityTorch> type, World worldIn) {
         super(type, worldIn);
-        this.xTile = -1;
-        this.yTile = -1;
-        this.zTile = -1;
         this.pickupStatus = EntityTorch.PickupStatus.DISALLOWED;
         this.damage = 2.0D;
-        //this.setSize(0.5F, 0.5F);
     }
 
-    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, double x, double y, double z, World worldIn) {
+    public EntityTorch(EntityType<? extends EntityTorch> type, double x, double y, double z, World worldIn) {
         this(type, worldIn);
         this.setPosition(x, y, z);
     }
 
-    public EntityTorch(EntityType<? extends AbstractArrowEntity> type, LivingEntity shooter, World worldIn) {
+    public EntityTorch(EntityType<? extends EntityTorch> type, LivingEntity shooter, World worldIn) {
         this(type, shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ, worldIn);
         this.setShooter(shooter);
 
@@ -97,9 +90,9 @@ public class EntityTorch extends AbstractArrowEntity {
             if (!blockstate.isAir(this.world, blockpos)) {
                 this.inBlockState.onEntityCollision(this.world, blockpos, this);
                 if (!world.isRemote) {
-                    int x = this.xTile;
-                    int y = this.yTile;
-                    int z = this.zTile;
+                    int x = blockpos.getX();
+                    int y = blockpos.getY();
+                    int z = blockpos.getZ();
                     World world = this.world;
                     BlockState torch_state = Blocks.TORCH.getDefaultState();
                     BlockPos up_pos = new BlockPos(x, y + 1, z);
