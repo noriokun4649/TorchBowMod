@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 
 import java.util.function.Predicate;
 
-import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
 import static mod.torchbowmod.TorchBowMod.multiTorch;
 import static net.minecraft.item.BowItem.getArrowVelocity;
 
@@ -62,16 +61,16 @@ public class TorchBow extends ShootableItem {
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
                         float size = 10;
-                        shootTorch(playerentity.rotationPitch, playerentity.rotationYaw ,playerentity,entityLiving,worldIn,itemstack,stack,flag1,f);
+                        shootTorch(playerentity.rotationPitch, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                         if (itemstack.getItem() == multiTorch) {
-                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw - size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw + size, playerentity,entityLiving,  worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw - size, playerentity,entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                         }
                     }
 
@@ -88,8 +87,9 @@ public class TorchBow extends ShootableItem {
             }
         }
     }
-    private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entitle,LivingEntity livingEntity, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
-        EntityTorch abstractedly = new EntityTorch(EMERALD_ARROW, livingEntity, worldIn);
+
+    private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entitle, LivingEntity livingEntity, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
+        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity);
         abstractedly.shoot(entitle, offsetPitch, offsetYaw, 0.0F, f * 3.0F, 1.0F);
         if (f == 1.0F) {
             abstractedly.setIsCritical(true);

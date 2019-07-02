@@ -7,42 +7,40 @@ import net.minecraft.block.BushBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.IPacket;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
+import static mod.torchbowmod.TorchBowMod.TORCH_ENTITY;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
 import static net.minecraft.util.Direction.*;
 
-public class EntityTorch extends ArrowEntity {
+public class EntityTorch extends AbstractArrowEntity {
     @Nullable
     private BlockState inBlockState;
     private double damage;
 
-    public EntityTorch(EntityType<? extends EntityTorch> type, World worldIn) {
-        super(type, worldIn);
-        this.pickupStatus = EntityTorch.PickupStatus.DISALLOWED;
-        this.damage = 2.0D;
+    public EntityTorch(FMLPlayMessages.SpawnEntity packet, World worldIn﻿) {
+        super(TORCH_ENTITY, worldIn﻿);
     }
 
-    public EntityTorch(EntityType<? extends EntityTorch> type, double x, double y, double z, World worldIn) {
-        this(type, worldIn);
-        this.setPosition(x, y, z);
+    public EntityTorch(EntityType<? extends EntityTorch> p_i50172_1_, World p_i50172_2_) {
+        super(p_i50172_1_, p_i50172_2_);
     }
 
-    public EntityTorch(EntityType<? extends EntityTorch> type, LivingEntity shooter, World worldIn) {
-        this(type, shooter.posX, shooter.posY + (double) shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ, worldIn);
-        this.setShooter(shooter);
+    public EntityTorch(World worldIn, double x, double y, double z) {
+        super(TORCH_ENTITY, x, y, z, worldIn);
+    }
 
-        if (shooter instanceof PlayerEntity) {
-            this.pickupStatus = EntityTorch.PickupStatus.ALLOWED;
-        }
+    public EntityTorch(World worldIn, LivingEntity shooter) {
+        super(TORCH_ENTITY, shooter, worldIn);
     }
 
     @Override
@@ -53,6 +51,11 @@ public class EntityTorch extends ArrowEntity {
         //if (type != null && !type.equals("lmmx.LittleMaidX")) {//リトルメイド以外だったら
         entity.setFire(100);//火を付ける
         //}
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     /**

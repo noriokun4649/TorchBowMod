@@ -35,7 +35,7 @@ public class TorchBowMod {
     public static Item multiTorch = new Item(new Item.Properties()
             .group(torchBowModTab).maxStackSize(64))
             .setRegistryName(new ResourceLocation(MODID, "multitorch"));
-    public static EntityType<EntityTorch> EMERALD_ARROW;
+    public static EntityType<EntityTorch> TORCH_ENTITY;
 
     public TorchBowMod() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -50,6 +50,7 @@ public class TorchBowMod {
 
     private void initClient(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(EntityTorch.class, RenderTorch::new);
+
         torchBowModTab.createIcon();
     }
 
@@ -63,14 +64,15 @@ public class TorchBowMod {
 
         @SubscribeEvent
         public static void registerEntityTypes(final RegistryEvent.Register<EntityType<?>> event) {
-            EMERALD_ARROW = EntityType.Builder.<EntityTorch>create(EntityTorch::new, EntityClassification.MISC)
+            TORCH_ENTITY = EntityType.Builder.<EntityTorch>create(EntityTorch::new, EntityClassification.MISC)
+                    .setCustomClientFactory(EntityTorch::new)
                     .setTrackingRange(60)
                     .setUpdateInterval(5)
                     .setShouldReceiveVelocityUpdates(true)
                     .size(0.5F, 0.5F)
                     .build(MODID + ":entitytorch");
-            EMERALD_ARROW.setRegistryName(new ResourceLocation(MODID, "entitytorch"));
-            event.getRegistry().register(EMERALD_ARROW);
+            TORCH_ENTITY.setRegistryName(new ResourceLocation(MODID, "entitytorch"));
+            event.getRegistry().register(TORCH_ENTITY);
         }
     }
 
