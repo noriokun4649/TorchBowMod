@@ -85,9 +85,11 @@ public class TorchBow extends ShootableItem {
                                 playerentity.inventory.deleteStack(itemstack);
                             }
                         } else if (binder) {//TorchBandolierだった場合の処理
-                            int Size = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");//今のアイテムの数取得
-                            int retrun_size = --Size;
-                            torchbinder.getOrCreateChildTag("TorchBandolier").putInt("Count", retrun_size);//TorchBandolierのアイテムの数減少させる。
+                            if (!worldIn.isRemote) {
+                                int Size = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");//今のアイテムの数取得
+                                int retrun_size = --Size;
+                                torchbinder.getOrCreateChildTag("TorchBandolier").putInt("Count", retrun_size);//TorchBandolierのアイテムの数減少させる。
+                            }
                         }
                     }
 
