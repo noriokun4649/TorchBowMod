@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +29,10 @@ public class TorchBowMod {
             return new ItemStack(torchbow);
         }
     });
+    @ObjectHolder("torchbandolier:torch_bandolier")
+    public static Item torchbinder = null;
+    @ObjectHolder("storagebox:storagebox")
+    public static Item StorageBox = null;
     public static Item torchbow = new TorchBow(new Item.Properties().group(torchBowModTab).defaultMaxDamage(384)).setRegistryName(new ResourceLocation(MODID, "torchbow"));
     public static Item multiTorch = new Item(new Item.Properties().group(torchBowModTab).maxStackSize(64)).setRegistryName(new ResourceLocation(MODID, "multitorch"));
     public static EntityType<EntityTorch> EMERALD_ARROW;

@@ -12,6 +12,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
@@ -21,10 +22,13 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
-import static mod.torchbowmod.TorchBowMod.EMERALD_ARROW;
-import static mod.torchbowmod.TorchBowMod.multiTorch;
-
+import static mod.torchbowmod.TorchBowMod.*;
 public class TorchBow extends Item {
+    private ItemStack torchbinder;
+    private ItemStack sitemstack;
+    private boolean binder;
+    private boolean sitem;
+    private boolean storageid;
 
     public TorchBow(Properties properties) {
         super(properties);
@@ -50,6 +54,10 @@ public class TorchBow extends Item {
                 ItemStack itemstack = player.inventory.getStackInSlot(i);
                 if (this.isArrow(itemstack)) {
                     return itemstack;
+                } else if (storageid) {
+                    return sitemstack;
+                } else if (binder) {
+                    return torchbinder;
                 }
             }
 
@@ -96,10 +104,30 @@ public class TorchBow extends Item {
                     }
 
                     worldIn.playSound((EntityPlayer) null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-                    if (!flag1 && !entityplayer.abilities.isCreativeMode) {
-                        itemstack.shrink(1);
-                        if (itemstack.isEmpty()) {
-                            entityplayer.inventory.deleteStack(itemstack);
+                    if (!entityplayer.abilities.isCreativeMode){
+                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch ) {
+                            itemstack.shrink(1);
+                            if (itemstack.isEmpty()) {
+                                entityplayer.inventory.deleteStack(itemstack);
+                            }
+                        }else if (sitem) {//StorageBoxだった場合の処理
+                            if (!worldIn.isRemote) {
+                                if (storageid) {
+                                    int Size = sitemstack.getTag().getInt("StorageSize");//今のアイテムの数取得
+                                    int retrun_size = --Size;
+                                    if (retrun_size != 0) {
+                                        sitemstack.getTag().setInt("StorageSize", retrun_size);//ストレージBoxの中のアイテムの数減少させる。
+                                    } else {
+                                        sitemstack.getTag().removeTag("StorageItemData");
+                                    }
+                                }
+                            }
+                        }  else if (binder) {//TorchBandolierだった場合の処理
+                            if (!worldIn.isRemote) {
+                                int Size = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");//今のアイテムの数取得
+                                int retrun_size = --Size;
+                                torchbinder.getOrCreateChildTag("TorchBandolier").setInt("Count", retrun_size);//TorchBandolierのアイテムの数減少させる。
+                            }
                         }
                     }
 
@@ -160,15 +188,90 @@ public class TorchBow extends Item {
 
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
+        binder = getSilentsMod(playerIn);
+        storageid = getStorageMod(playerIn);
         boolean flag = !this.findAmmo(playerIn).isEmpty();
         ActionResult<ItemStack> ret = ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
         if (ret != null) {
             return ret;
-        } else if (!playerIn.abilities.isCreativeMode && !flag) {
+        } else if (!playerIn.abilities.isCreativeMode && !flag && !storageid && !binder) {
             return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);
         } else {
             playerIn.setActiveHand(handIn);
             return new ActionResult(EnumActionResult.SUCCESS, itemstack);
         }
+    }
+    /***
+     *  Modのアイテムが有効かどうか、松明が切れてないかどうか
+     *  StorageBoxMod用処理
+     * @param player
+     * @return Modお問い合わせ
+     */
+    private boolean getStorageMod(EntityPlayer player) {
+        sitemstack = getStack(player, TorchBowMod.StorageBox);//ItemStack取得
+        boolean as = sitemstack.getItem() == TorchBowMod.StorageBox;//正しいかどうかチェック
+        boolean storageid = false;//ストレージBoxに入ってるItemのIDチェック用の変数初期化　初期値：無効
+        int ssize = 0;
+        if (as) {//ただしかったら
+            NBTTagCompound a = sitemstack.getTag().getCompound("StorageItemData");//StrageBoxに入ってるItemStackを取得
+            if (a != null) {
+                Item itemname = ItemStack.read(a).getItem();//スロトレージBoxのなかのID取得
+                Item itemid = new ItemStack(Blocks.TORCH).getItem();//対象のID取得
+                Item itemid2 = new ItemStack(multiTorch).getItem();
+                sitem = itemname == itemid || itemname == itemid2;
+                if (sitem) {//同じ場合
+                    ssize = sitemstack.getTag().getInt("StorageSize");
+                    storageid = true;//有効に
+                    if (ssize == 0) {
+                        storageid = false;//無効に
+                    }
+                }
+            } else {
+                sitem = false;
+            }
+        }
+        return storageid;
+    }
+    /***
+     * アイテムからアイテムスタック取得。
+     * @param player
+     * @param item
+     * @return　ItemStack
+     */
+    private ItemStack getStack(EntityPlayer player, Item item) {
+        for (int i = 0; i < player.inventory.mainInventory.size(); ++i) {
+            if (player.inventory.mainInventory.get(i) != null && player.inventory.mainInventory.get(i).getItem() == item/*TorchBowMod.StorageBox*/) {
+                ItemStack itemstack = player.inventory.mainInventory.get(i);
+                if (itemstack != null) {//アイテムスタックがからじゃなかったら
+                    if (itemstack.getTag() == null) {//NBTがNullだったら
+                        itemstack.setTag(new NBTTagCompound());//新しい空のNBTを書き込む
+                    }
+                }
+                return itemstack;
+            }
+        }
+        ItemStack stack = new ItemStack(Items.BONE);//取得できなかったら適当に骨入れる
+        return stack;
+    }
+    /**
+     * Modのアイテムが有効かどうか、松明が切れてないかどうか
+     * TorchBandolier用処理
+     *
+     * @param player 　プレイヤー
+     * @return Modお問い合わせ
+     */
+    private boolean getSilentsMod(EntityPlayer player) {
+        torchbinder = getStack(player, TorchBowMod.torchbinder);//ItemStack取得
+        boolean mitem = torchbinder.getItem() == TorchBowMod.torchbinder;//正しいかどうかチェック
+        boolean myes = false;//ストレージBoxに入ってるItemのIDチェック用の変数初期化　初期値：無効
+        if (mitem) {
+            int ssize = 0;
+            ssize = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");
+            myes = true;//有効に
+            if (ssize == 0) {
+                myes = false;//無効に
+            }
+        }
+        return myes;
     }
 }
