@@ -21,7 +21,7 @@ public class TorchBow extends ShootableItem {
     private ItemStack torchbinder;
     private boolean binder;
     public static final Predicate<ItemStack> TORCH = (p_220002_0_) -> {
-        return p_220002_0_.getItem() == Blocks.TORCH.asItem() || p_220002_0_.getItem() == multiTorch || p_220002_0_.getItem() == TorchBowMod.torchbinder ;
+        return p_220002_0_.getItem() == Blocks.TORCH.asItem() || p_220002_0_.getItem() == multiTorch || (p_220002_0_.getItem() == TorchBowMod.torchbinder && p_220002_0_.getOrCreateChildTag("TorchBandolier").getInt("Count") > 0);
     };
 
     public TorchBow(Properties properties) {
