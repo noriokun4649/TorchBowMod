@@ -1,22 +1,26 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/torchbowmod/files",
   "promos": {
-    "1.13.2-latest": "1.1-Beta",
-    "1.13.2-recommended": "1.1-Beta",
-    "1.14.2-latest": "1.1-Beta",
-    "1.14.2-recommended": "1.1-Beta",
-    "1.14.3-latest": "1.1-Beta",
-    "1.14.3-recommended": "1.1-Beta"
+    "1.13.2-latest": "1.3",
+    "1.13.2-recommended": "1.3",
+    "1.14.2-latest": "1.2",
+    "1.14.2-recommended": "1.2",
+    "1.14.3-latest": "1.2",
+    "1.14.3-recommended": "1.2"
   },
   "1.13.2": {
+    "1.3" : "Fix bug. Support TorchBandolier and StorageBox",
+    "1.2-Beta" : "Fix bug. add item MultiTorch",
     "1.1-Beta" : "Fix lang file.",
     "1.0-Beta" : "Fast release. update to 1.13.2."
   },
   "1.14.2": {
+    "1.2" : "Fix bug. Support TorchBandolier!",
     "1.1-Beta" : "Fix EntityRender error. Support 1.14.3",
     "1.0-Alpha" : "Fast release. update to 1.14.2."
   },
   "1.14.3": {
+    "1.2" : "Fix bug. Support TorchBandolier!",
     "1.1-Beta" : "Fix EntityRender error. Support 1.14.3"
   }
 }
