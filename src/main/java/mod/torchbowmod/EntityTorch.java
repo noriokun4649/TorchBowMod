@@ -155,7 +155,7 @@ public class EntityTorch extends EntityArrow {
     private boolean isBlockAIR(BlockPos pos) {
         Block getBlock = this.world.getBlockState(pos).getBlock();
         if (getBlock instanceof BlockBush) return true;
-        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW};//空気だとみなすブロックリスト
+        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW,Blocks.VINE};//空気だとみなすブロックリスト
         for (Block traget : a) {
             if (getBlock == traget) return true;
         }
