@@ -33,6 +33,8 @@ public class TorchBowMod {
 
     @ObjectHolder("torchbandolier:torch_bandolier")
     public static Item torchbinder = null;
+    @ObjectHolder("storagebox:storagebox")
+    public static Item StorageBox = null;
 
     public static Item torchbow = new TorchBow(new Item.Properties()
             .group(torchBowModTab).defaultMaxDamage(384))

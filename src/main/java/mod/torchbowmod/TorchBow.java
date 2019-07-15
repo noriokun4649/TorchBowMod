@@ -1,5 +1,6 @@
 package mod.torchbowmod;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -19,9 +20,18 @@ import static net.minecraft.item.BowItem.getArrowVelocity;
 
 public class TorchBow extends ShootableItem {
     private ItemStack torchbinder;
+    private ItemStack sitemstack;
+    private boolean sitem;
+    private boolean storageid;
+
     private boolean binder;
-    public static final Predicate<ItemStack> TORCH = (p_220002_0_) -> {
-        return p_220002_0_.getItem() == Blocks.TORCH.asItem() || p_220002_0_.getItem() == multiTorch || (p_220002_0_.getItem() == TorchBowMod.torchbinder && p_220002_0_.getOrCreateChildTag("TorchBandolier").getInt("Count") > 0);
+    public static final Predicate<ItemStack> TORCH = (itemStack) -> {
+        return itemStack.getItem() == Blocks.TORCH.asItem() ||
+                itemStack.getItem() == multiTorch ||
+                (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateChildTag("TorchBandolier").getInt("Count") > 0 ) ||
+                (itemStack.getItem() == TorchBowMod.StorageBox &&
+                        (ItemStack.read(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
+                        ItemStack.read(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch ));
     };
 
     public TorchBow(Properties properties) {
@@ -65,7 +75,7 @@ public class TorchBow extends ShootableItem {
                     if (!worldIn.isRemote) {
                         float size = 10;
                         shootTorch(playerentity.rotationPitch, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
-                        if (itemstack.getItem() == multiTorch) {
+                        if (itemstack.getItem() == multiTorch || ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch ) {
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
@@ -84,7 +94,19 @@ public class TorchBow extends ShootableItem {
                             if (itemstack.isEmpty()) {
                                 playerentity.inventory.deleteStack(itemstack);
                             }
-                        } else if (binder) {//TorchBandolierだった場合の処理
+                        }else if (sitem) {//StorageBoxだった場合の処理
+                            if (!worldIn.isRemote) {
+                                if (storageid) {
+                                    int Size = sitemstack.getTag().getInt("StorageSize");//今のアイテムの数取得
+                                    int retrun_size = --Size;
+                                    if (retrun_size != 0) {
+                                        sitemstack.getTag().putInt("StorageSize", retrun_size);//ストレージBoxの中のアイテムの数減少させる。
+                                    } else {
+                                        sitemstack.getTag().remove("StorageItemData");
+                                    }
+                                }
+                            }
+                        }  else if (binder) {//TorchBandolierだった場合の処理
                             if (!worldIn.isRemote) {
                                 int Size = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");//今のアイテムの数取得
                                 int retrun_size = --Size;
@@ -140,12 +162,13 @@ public class TorchBow extends ShootableItem {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         binder = getSilentsMod(playerIn);
+        storageid = getStorageMod(playerIn);
         boolean flag = !playerIn.func_213356_f(itemstack).isEmpty();
 
         ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
         if (ret != null) return ret;
 
-        if (!playerIn.abilities.isCreativeMode && !flag && !binder) {
+        if (!playerIn.abilities.isCreativeMode && !flag && !binder && !storageid) {
             return flag ? new ActionResult<>(ActionResultType.PASS, itemstack) : new ActionResult<>(ActionResultType.FAIL, itemstack);
         } else {
             playerIn.setActiveHand(handIn);
@@ -172,6 +195,37 @@ public class TorchBow extends ShootableItem {
         }
         ItemStack stack = new ItemStack(Items.BONE);//取得できなかったら適当に骨入れる
         return stack;
+    }
+    /***
+     *  Modのアイテムが有効かどうか、松明が切れてないかどうか
+     *  StorageBoxMod用処理
+     * @param player
+     * @return Modお問い合わせ
+     */
+    private boolean getStorageMod(PlayerEntity player) {
+        sitemstack = getStack(player, TorchBowMod.StorageBox);//ItemStack取得
+        boolean as = sitemstack.getItem() == TorchBowMod.StorageBox;//正しいかどうかチェック
+        boolean storageid = false;//ストレージBoxに入ってるItemのIDチェック用の変数初期化　初期値：無効
+        int ssize = 0;
+        if (as) {//ただしかったら
+            CompoundNBT a = sitemstack.getTag().getCompound("StorageItemData");//StrageBoxに入ってるItemStackを取得
+            if (a != null) {
+                Item itemname = ItemStack.read(a).getItem();//スロトレージBoxのなかのID取得
+                Item itemid = new ItemStack(Blocks.TORCH).getItem();//対象のID取得
+                Item itemid2 = new ItemStack(multiTorch).getItem();
+                sitem = itemname == itemid || itemname == itemid2;
+                if (sitem) {//同じ場合
+                    ssize = sitemstack.getTag().getInt("StorageSize");
+                    storageid = true;//有効に
+                    if (ssize == 0) {
+                        storageid = false;//無効に
+                    }
+                }
+            } else {
+                sitem = false;
+            }
+        }
+        return storageid;
     }
     /**
      * Modのアイテムが有効かどうか、松明が切れてないかどうか
