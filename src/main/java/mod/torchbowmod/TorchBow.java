@@ -91,7 +91,7 @@ public class TorchBow extends Item {
                     if (!worldIn.isRemote) {
                         float size = 10;
                         shootTorch(entityplayer.rotationPitch, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
-                        if (itemstack.getItem() == multiTorch) {
+                        if (itemstack.getItem() == multiTorch || ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch) {
                             shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw + size, entityplayer, worldIn, itemstack, stack, flag1, f);
                             shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw, entityplayer, worldIn, itemstack, stack, flag1, f);
                             shootTorch(entityplayer.rotationPitch - size, entityplayer.rotationYaw - size, entityplayer, worldIn, itemstack, stack, flag1, f);
