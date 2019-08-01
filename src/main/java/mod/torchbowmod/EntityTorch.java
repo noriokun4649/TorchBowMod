@@ -82,7 +82,7 @@ public class EntityTorch extends AbstractArrowEntity {
             this.arrowShake = 7;
             this.setIsCritical(false);
             this.func_213872_b((byte) 0);
-            this.func_213869_a(SoundEvents.ENTITY_ARROW_HIT);
+            this.setHitSound(SoundEvents.ENTITY_ARROW_HIT);
             this.func_213865_o(false);
             //this.func_213870_w();
             blockstate.onProjectileCollision(this.world, blockstate, blockraytraceresult, this);

@@ -58,7 +58,7 @@ public class TorchBow extends ShootableItem {
         if (entityLiving instanceof PlayerEntity) {
             PlayerEntity playerentity = (PlayerEntity) entityLiving;
             boolean flag = playerentity.abilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-            ItemStack itemstack = playerentity.func_213356_f(stack);
+            ItemStack itemstack = playerentity.findAmmo(stack);
 
             int i = this.getUseDuration(stack) - timeLeft;
             i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, i, !itemstack.isEmpty() || flag);
@@ -70,7 +70,7 @@ public class TorchBow extends ShootableItem {
                 }
 
                 float f = getArrowVelocity(i);
-                if (!((double) f < 0.1D)) {
+                if ((double)f >= 0.1D) {
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
                         float size = 10;
@@ -163,7 +163,7 @@ public class TorchBow extends ShootableItem {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         binder = getSilentsMod(playerIn);
         storageid = getStorageMod(playerIn);
-        boolean flag = !playerIn.func_213356_f(itemstack).isEmpty();
+        boolean flag = !playerIn.findAmmo(itemstack).isEmpty();
 
         ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
         if (ret != null) return ret;
