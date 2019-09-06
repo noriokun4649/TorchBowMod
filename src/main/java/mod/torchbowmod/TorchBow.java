@@ -75,7 +75,7 @@ public class TorchBow extends ShootableItem {
                     if (!worldIn.isRemote) {
                         float size = 10;
                         shootTorch(playerentity.rotationPitch, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
-                        if (itemstack.getItem() == multiTorch || ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch ) {
+                        if (itemstack.getItem() == multiTorch || (itemstack.getItem() == TorchBowMod.StorageBox  && ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch )) {
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
