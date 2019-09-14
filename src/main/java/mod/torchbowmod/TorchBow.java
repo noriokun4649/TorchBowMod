@@ -47,7 +47,10 @@ public class TorchBow extends ShootableItem {
             return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
         });
     }
-
+    @Override
+    public boolean getIsRepairable(ItemStack p_82789_1_, ItemStack p_82789_2_) {
+        return p_82789_2_.getItem() == Items.FLINT_AND_STEEL || super.getIsRepairable(p_82789_1_, p_82789_2_);
+    }
     @Override
     public Predicate<ItemStack> getInventoryAmmoPredicate() {
         return TORCH;
