@@ -82,8 +82,8 @@ public class TorchBow extends ShootableItem {
                             shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch + size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
-                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw + size * 1.2f, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
+                            shootTorch(playerentity.rotationPitch, playerentity.rotationYaw - size * 1.2f, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                         }
                     }
 
