@@ -1,0 +1,16 @@
+
+item.torchbow.name=松明弓
+itemGroup.TorchBowModTab=松明弓MOD
+death.attack.EntityTorch=%1$s身上插满了火把！
+log.sb.check=正在检测StorageBox是否安装……
+log.sb.load=检测到StorageBox已安装。已读取联动数据
+log.sb.error=无法读取StorageBox
+log.sb.unload=StorageBox没有安装。
+log.sg.check=正在检测Silent's Gems是否安装……
+log.sg.load=检测到Silent's Gems已安装。已读取联动数据
+log.sg.error=无法读取Silent's Gems
+log.sg.unload=Silent's Gems没有安装。
+log.gc.check=正在检测Galacticraft是否安装……
+log.gc.load=检测到Galacticraft已安装。已读取联动数据
+log.gc.error=无法读取Galacticraft
+log.gc.unload=Galacticraft没有安装。
