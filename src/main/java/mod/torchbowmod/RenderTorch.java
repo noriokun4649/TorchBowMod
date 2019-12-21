@@ -18,7 +18,7 @@ public class RenderTorch extends ArrowRenderer<EntityTorch> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityTorch entity) {
+    public ResourceLocation getEntityTexture(EntityTorch entity) {
         return TorchTextures;
     }
 }
