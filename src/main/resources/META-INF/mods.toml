@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[30,)"
 
 [[mods]]
 modId="torchbowmod"
@@ -13,12 +13,12 @@ description="Adds a TorchBow."
 [[dependencies.torchbowmod]]
     modId="forge"
     mandatory=true
-    versionRange="[28,)"
+    versionRange="[30,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.torchbowmod]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15]"
+    versionRange="[1.15.1]"
     ordering="NONE"
     side="BOTH"
