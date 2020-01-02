@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -90,52 +91,37 @@ public class EntityTorch extends AbstractArrowEntity {
             if (!blockstate.isAir(this.world, blockpos)) {
                 this.inBlockState.onEntityCollision(this.world, blockpos, this);
                 if (!world.isRemote) {
-                    int x = blockpos.getX();
-                    int y = blockpos.getY();
-                    int z = blockpos.getZ();
-                    World world = this.world;
-                    BlockState torch_state = Blocks.TORCH.getDefaultState();
-                    BlockPos up_pos = new BlockPos(x, y + 1, z);
-                    if (isBlockAIR(up_pos)) {
-                        world.setBlockState(up_pos, torch_state);
-                        this.setDead();
-                    } else {
-                        torch_state = Blocks.WALL_TORCH.getDefaultState();
-                        switch (this.getHorizontalFacing()) {
-                            case EAST:
-                                BlockPos east_pos = new BlockPos(x + 1, y, z);
-                                if (isBlockAIR(east_pos)) {
-                                    world.setBlockState(east_pos, torch_state.with(HORIZONTAL_FACING, EAST));
-                                    this.setDead();
-                                    break;
-                                }
-                            case WEST:
-                                BlockPos west_pos = new BlockPos(x - 1, y, z);
-                                if (isBlockAIR(west_pos)) {
-                                    world.setBlockState(west_pos, torch_state.with(HORIZONTAL_FACING, WEST));
-                                    this.setDead();
-                                    break;
-                                }
-                            case NORTH:
-                                BlockPos north_pos = new BlockPos(x, y, z + 1);
-                                if (isBlockAIR(north_pos)) {
-                                    world.setBlockState(north_pos, torch_state.with(HORIZONTAL_FACING, SOUTH));
-                                    this.setDead();
-                                    break;
-                                }
-                            case SOUTH:
-                                BlockPos south_pos = new BlockPos(x, y, z - 1);
-                                if (isBlockAIR(south_pos)) {
-                                    world.setBlockState(south_pos, torch_state.with(HORIZONTAL_FACING, NORTH));
-                                    this.setDead();
-                                    break;
-                                }
+                    Direction face = ((BlockRayTraceResult) raytraceResultIn).getFace();
+                    BlockState torch_state = Blocks.WALL_TORCH.getDefaultState();
+                    BlockPos setBlockPos = getPosOfFace(blockpos, face);
+                    if (isBlockAIR(setBlockPos)) {
+                        if (face == UP){
+                            torch_state = Blocks.TORCH.getDefaultState();
+                            world.setBlockState(setBlockPos, torch_state);
+                        }else {
+                            world.setBlockState(setBlockPos, torch_state.with(HORIZONTAL_FACING, face));
                         }
+                        this.setDead();
                     }
                 }
             }
         }
 
+    }
+    private BlockPos getPosOfFace(BlockPos blockPos, Direction face){
+        switch (face) {
+            case UP:
+                return blockPos.up();
+            case EAST:
+                return blockPos.east();
+            case WEST:
+                return blockPos.west();
+            case SOUTH:
+                return blockPos.south();
+            case NORTH:
+                return blockPos.north();
+        }
+        return blockPos;
     }
 
     private void setDead() {
