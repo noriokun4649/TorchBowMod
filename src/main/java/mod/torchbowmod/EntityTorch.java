@@ -19,6 +19,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
+import static mod.torchbowmod.TorchBowMod.CeilingTorch;
 import static mod.torchbowmod.TorchBowMod.TORCH_ENTITY;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
 import static net.minecraft.util.Direction.*;
@@ -96,6 +97,9 @@ public class EntityTorch extends AbstractArrowEntity {
                         if (face == UP){
                             torch_state = Blocks.TORCH.getDefaultState();
                             world.setBlockState(setBlockPos, torch_state);
+                        }else if (face == DOWN && CeilingTorch != null){
+                            BlockState ceiling_torch = CeilingTorch.getDefaultState();
+                            world.setBlockState(setBlockPos, ceiling_torch);
                         }else {
                             world.setBlockState(setBlockPos, torch_state.with(HORIZONTAL_FACING, face));
                         }
@@ -118,6 +122,8 @@ public class EntityTorch extends AbstractArrowEntity {
                 return blockPos.south();
             case NORTH:
                 return blockPos.north();
+            case DOWN:
+                return blockPos.down();
         }
         return blockPos;
     }
