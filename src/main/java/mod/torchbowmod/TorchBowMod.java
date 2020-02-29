@@ -1,6 +1,7 @@
 package mod.torchbowmod;
 
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -35,6 +36,8 @@ public class TorchBowMod {
     public static Item torchbinder = null;
     @ObjectHolder("storagebox:storagebox")
     public static Item StorageBox = null;
+    @ObjectHolder("ceilingtorch:torch")
+    public static Block CeilingTorch = null;
 
     public static Item torchbow = new TorchBow(new Item.Properties()
             .group(torchBowModTab).defaultMaxDamage(384))
