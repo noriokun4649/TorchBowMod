@@ -11,18 +11,19 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.Direction;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import javax.annotation.Nullable;
-
 import static mod.torchbowmod.TorchBowMod.CeilingTorch;
 import static mod.torchbowmod.TorchBowMod.TORCH_ENTITY;
 import static net.minecraft.block.HorizontalBlock.HORIZONTAL_FACING;
-import static net.minecraft.util.Direction.*;
+import static net.minecraft.util.Direction.DOWN;
+import static net.minecraft.util.Direction.UP;
 
 public class EntityTorch extends AbstractArrowEntity {
 
@@ -56,16 +57,16 @@ public class EntityTorch extends AbstractArrowEntity {
         if (raytraceresult$type == RayTraceResult.Type.BLOCK) {
             BlockRayTraceResult blockraytraceresult = raytraceResultIn;
             BlockState blockstate = this.world.getBlockState(blockraytraceresult.getPos());
-            setTorch(blockraytraceresult,blockstate,raytraceResultIn);
+            setTorch(blockraytraceresult, blockstate, raytraceResultIn);
         }
     }
 
-        @Override
+    @Override
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    private void setTorch(BlockRayTraceResult blockraytraceresult, BlockState blockstate, RayTraceResult raytraceResultIn){
+    private void setTorch(BlockRayTraceResult blockraytraceresult, BlockState blockstate, RayTraceResult raytraceResultIn) {
         BlockPos blockpos = blockraytraceresult.getPos();
         if (!blockstate.isAir(this.world, blockpos)) {
             if (!world.isRemote) {
@@ -73,13 +74,13 @@ public class EntityTorch extends AbstractArrowEntity {
                 BlockState torch_state = Blocks.WALL_TORCH.getDefaultState();
                 BlockPos setBlockPos = getPosOfFace(blockpos, face);
                 if (isBlockAIR(setBlockPos)) {
-                    if (face == UP){
+                    if (face == UP) {
                         torch_state = Blocks.TORCH.getDefaultState();
                         world.setBlockState(setBlockPos, torch_state);
-                    }else if (face == DOWN && CeilingTorch != null){
+                    } else if (face == DOWN && CeilingTorch != null) {
                         BlockState ceiling_torch = CeilingTorch.getDefaultState();
                         world.setBlockState(setBlockPos, ceiling_torch);
-                    }else if(face != DOWN){
+                    } else if (face != DOWN) {
                         world.setBlockState(setBlockPos, torch_state.with(HORIZONTAL_FACING, face));
                     }
                     this.setDead();
@@ -88,7 +89,7 @@ public class EntityTorch extends AbstractArrowEntity {
         }
     }
 
-    private BlockPos getPosOfFace(BlockPos blockPos,Direction face){
+    private BlockPos getPosOfFace(BlockPos blockPos, Direction face) {
         switch (face) {
             case UP:
                 return blockPos.up();
@@ -118,7 +119,7 @@ public class EntityTorch extends AbstractArrowEntity {
     private boolean isBlockAIR(BlockPos pos) {
         Block getBlock = this.world.getBlockState(pos).getBlock();
         if (getBlock instanceof BushBlock) return true;
-        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW,Blocks.VINE};//空気だとみなすブロックリスト
+        Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW, Blocks.VINE};//空気だとみなすブロックリスト
         for (Block traget : a) {
             if (getBlock == traget) return true;
         }

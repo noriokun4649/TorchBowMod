@@ -59,7 +59,7 @@ public class TorchBowMod {
     }
 
     private void initClient(final FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY,RenderTorch::new);
+        RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY, RenderTorch::new);
 
         torchBowModTab.createIcon();
     }

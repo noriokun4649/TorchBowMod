@@ -1,6 +1,5 @@
 package mod.torchbowmod;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -30,19 +29,21 @@ public class TorchBow extends ShootableItem implements IVanishable {
     public static final Predicate<ItemStack> TORCH = (itemStack) -> {
         return itemStack.getItem() == Blocks.TORCH.asItem() ||
                 itemStack.getItem() == multiTorch ||
-                (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateChildTag("TorchBandolier").getInt("Count") > 0 ) ||
+                (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateChildTag("TorchBandolier").getInt("Count") > 0) ||
                 (itemStack.getItem() == TorchBowMod.StorageBox &&
                         (ItemStack.read(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
-                        ItemStack.read(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch ));
+                                ItemStack.read(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch));
     };
 
     public TorchBow(Properties properties) {
         super(properties);
     }
+
     @Override
     public boolean getIsRepairable(ItemStack p_82789_1_, ItemStack p_82789_2_) {
         return p_82789_2_.getItem() == Items.FLINT_AND_STEEL || super.getIsRepairable(p_82789_1_, p_82789_2_);
     }
+
     @Override
     public Predicate<ItemStack> getInventoryAmmoPredicate() {
         return TORCH;
@@ -70,12 +71,12 @@ public class TorchBow extends ShootableItem implements IVanishable {
                 }
 
                 float f = getArrowVelocity(i);
-                if ((double)f >= 0.1D) {
+                if ((double) f >= 0.1D) {
                     boolean flag1 = playerentity.abilities.isCreativeMode || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isRemote) {
                         float size = 10;
                         shootTorch(playerentity.rotationPitch, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
-                        if (itemstack.getItem() == multiTorch || (itemstack.getItem() == TorchBowMod.StorageBox  && ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch )) {
+                        if (itemstack.getItem() == multiTorch || (itemstack.getItem() == TorchBowMod.StorageBox && ItemStack.read(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch)) {
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw + size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                             shootTorch(playerentity.rotationPitch - size, playerentity.rotationYaw - size, playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
@@ -88,13 +89,13 @@ public class TorchBow extends ShootableItem implements IVanishable {
                     }
 
                     worldIn.playSound((PlayerEntity) entityLiving, playerentity.prevPosX, playerentity.prevPosY, playerentity.prevPosZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-                    if (!playerentity.abilities.isCreativeMode){
-                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch ) {
+                    if (!playerentity.abilities.isCreativeMode) {
+                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch) {
                             itemstack.shrink(1);
                             if (itemstack.isEmpty()) {
                                 playerentity.inventory.deleteStack(itemstack);
                             }
-                        }else if (sitem) {//StorageBoxだった場合の処理
+                        } else if (sitem) {//StorageBoxだった場合の処理
                             if (!worldIn.isRemote) {
                                 if (storageid) {
                                     int Size = sitemstack.getTag().getInt("StorageSize");//今のアイテムの数取得
@@ -106,7 +107,7 @@ public class TorchBow extends ShootableItem implements IVanishable {
                                     }
                                 }
                             }
-                        }  else if (binder) {//TorchBandolierだった場合の処理
+                        } else if (binder) {//TorchBandolierだった場合の処理
                             if (!worldIn.isRemote) {
                                 int Size = torchbinder.getOrCreateChildTag("TorchBandolier").getInt("Count");//今のアイテムの数取得
                                 int retrun_size = --Size;
@@ -123,10 +124,10 @@ public class TorchBow extends ShootableItem implements IVanishable {
 
     private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entitle, LivingEntity livingEntity, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
         EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity);
-        float fs = -MathHelper.sin(offsetYaw * ((float)Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float)Math.PI / 180F));
-        float f1 = -MathHelper.sin(offsetPitch * ((float)Math.PI / 180F));
-        float f2 = MathHelper.cos(offsetYaw * ((float)Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float)Math.PI / 180F));
-        abstractedly.shoot(fs,f1,f2,f * 3.0F, 1.0F);
+        float fs = -MathHelper.sin(offsetYaw * ((float) Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float) Math.PI / 180F));
+        float f1 = -MathHelper.sin(offsetPitch * ((float) Math.PI / 180F));
+        float f2 = MathHelper.cos(offsetYaw * ((float) Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float) Math.PI / 180F));
+        abstractedly.shoot(fs, f1, f2, f * 3.0F, 1.0F);
         if (f == 1.0F) {
             abstractedly.setIsCritical(true);
         }
@@ -178,6 +179,7 @@ public class TorchBow extends ShootableItem implements IVanishable {
             return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
         }
     }
+
     /***
      * アイテムからアイテムスタック取得。
      * @param player
@@ -199,6 +201,7 @@ public class TorchBow extends ShootableItem implements IVanishable {
         ItemStack stack = new ItemStack(Items.BONE);//取得できなかったら適当に骨入れる
         return stack;
     }
+
     /***
      *  Modのアイテムが有効かどうか、松明が切れてないかどうか
      *  StorageBoxMod用処理
@@ -230,6 +233,7 @@ public class TorchBow extends ShootableItem implements IVanishable {
         }
         return storageid;
     }
+
     /**
      * Modのアイテムが有効かどうか、松明が切れてないかどうか
      * TorchBandolier用処理
