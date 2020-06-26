@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -11,6 +12,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.function.Predicate;
@@ -18,7 +20,7 @@ import java.util.function.Predicate;
 import static mod.torchbowmod.TorchBowMod.multiTorch;
 import static net.minecraft.item.BowItem.getArrowVelocity;
 
-public class TorchBow extends ShootableItem {
+public class TorchBow extends ShootableItem implements IVanishable {
     private ItemStack torchbinder;
     private ItemStack sitemstack;
     private boolean sitem;
@@ -36,16 +38,6 @@ public class TorchBow extends ShootableItem {
 
     public TorchBow(Properties properties) {
         super(properties);
-        this.addPropertyOverride(new ResourceLocation("pull"), (stack, world, entity) -> {
-            if (entity == null) {
-                return 0.0F;
-            } else {
-                return entity.getActiveItemStack().getItem() != Items.BOW ? 0.0F : (float) (stack.getUseDuration() - entity.getItemInUseCount()) / 20.0F;
-            }
-        });
-        this.addPropertyOverride(new ResourceLocation("pulling"), (stack, worldIn, entityIn) -> {
-            return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
-        });
     }
     @Override
     public boolean getIsRepairable(ItemStack p_82789_1_, ItemStack p_82789_2_) {
@@ -54,6 +46,11 @@ public class TorchBow extends ShootableItem {
     @Override
     public Predicate<ItemStack> getInventoryAmmoPredicate() {
         return TORCH;
+    }
+
+    @Override
+    public int func_230305_d_() {
+        return 15;
     }
 
     @Override
@@ -90,7 +87,7 @@ public class TorchBow extends ShootableItem {
                         }
                     }
 
-                    worldIn.playSound((PlayerEntity) entityLiving, playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+                    worldIn.playSound((PlayerEntity) entityLiving, playerentity.prevPosX, playerentity.prevPosY, playerentity.prevPosZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!playerentity.abilities.isCreativeMode){
                         if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch ) {
                             itemstack.shrink(1);
@@ -126,7 +123,10 @@ public class TorchBow extends ShootableItem {
 
     private void shootTorch(float offsetPitch, float offsetYaw, PlayerEntity entitle, LivingEntity livingEntity, World worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
         EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity);
-        abstractedly.shoot(entitle, offsetPitch, offsetYaw, 0.0F, f * 3.0F, 1.0F);
+        float fs = -MathHelper.sin(offsetYaw * ((float)Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float)Math.PI / 180F));
+        float f1 = -MathHelper.sin(offsetPitch * ((float)Math.PI / 180F));
+        float f2 = MathHelper.cos(offsetYaw * ((float)Math.PI / 180F)) * MathHelper.cos(offsetPitch * ((float)Math.PI / 180F));
+        abstractedly.shoot(fs,f1,f2,f * 3.0F, 1.0F);
         if (f == 1.0F) {
             abstractedly.setIsCritical(true);
         }

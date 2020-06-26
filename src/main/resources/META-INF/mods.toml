@@ -1,9 +1,9 @@
 modLoader="javafml"
-loaderVersion="[30,)"
+loaderVersion="[31,)"
 
 [[mods]]
 modId="torchbowmod"
-version="${file.jarVersion}"
+version="1.0-beta"
 displayName="TorchBowMod"
 updateJSONURL="https://raw.githubusercontent.com/noriokun4649/TorchBowMod/master/update.json"
 credits="noriokun4649"
@@ -13,12 +13,12 @@ description="Adds a TorchBow."
 [[dependencies.torchbowmod]]
     modId="forge"
     mandatory=true
-    versionRange="[30,)"
+    versionRange="[31,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.torchbowmod]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.1,1.15.2]"
+    versionRange="[1.16.1]"
     ordering="NONE"
     side="BOTH"
