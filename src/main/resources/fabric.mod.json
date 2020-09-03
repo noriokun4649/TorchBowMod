@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "torchbowmod",
+  "version": "${version}",
+
+  "name": "TorchBowMod",
+  "description": "TorchBowMod for fabric!",
+  "authors": [
+    "noriokun4649"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/torchbowmod",
+    "sources": "https://github.com/noriokun4649/TorchBowMod-fabric",
+    "issues": "https://github.com/noriokun4649/TorchBowMod-fabric/issues",
+    "email": "noriokun.official.mail@gmail.com"
+  },
+
+  "license": "MIT",
+  "icon": "assets/torchbowmod/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "mod.torchbowmod.TorchBowMod"
+    ],
+    "client": [
+      "mod.torchbowmod.TorchBowModClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

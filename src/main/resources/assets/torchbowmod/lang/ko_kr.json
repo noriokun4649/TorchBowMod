@@ -1,7 +1,7 @@
 {
   "item.torchbowmod.torchbow": "횃불용 활",
   "item.torchbowmod.multitorch": "횃불 뭉치",
-  "itemGroup.torchBowModTab": "TorchBowModTab",
+  "itemGroup.torchbowmod.torchbowmod_tab": "TorchBowModTab",
   "death.attack.EntityTorch": "%1$s이(가) %2$s이(가) 발사한 횃불에 꿰뚫렸다!",
   "log.sb.check": "StorageBox 도입 상태를 체크 중...",
   "log.sb.load": "StorageBox 도입을 확인. 로딩 완료",
