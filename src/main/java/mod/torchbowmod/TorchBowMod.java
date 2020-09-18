@@ -53,7 +53,6 @@ public class TorchBowMod {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::initClient);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void preInit(final FMLCommonSetupEvent event) {
@@ -62,7 +61,6 @@ public class TorchBowMod {
 
     private void initClient(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY, RenderTorch::new);
-
         torchBowModTab.createIcon();
         func_239418_a_(torchbow, new ResourceLocation("pull"), (p_239429_0_, p_239429_1_, p_239429_2_) -> {
             if (p_239429_2_ == null) {
@@ -80,7 +78,6 @@ public class TorchBowMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(torchbow, multiTorch);
-            LOGGER.info("HELLO from Register Item");
         }
 
         @SubscribeEvent
