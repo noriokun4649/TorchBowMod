@@ -77,13 +77,15 @@ public class EntityTorch extends AbstractArrowEntity {
                     if (face == UP) {
                         torch_state = Blocks.TORCH.getDefaultState();
                         world.setBlockState(setBlockPos, torch_state);
+                        this.setDead();
                     } else if (face == DOWN && CeilingTorch != null) {
                         BlockState ceiling_torch = CeilingTorch.getDefaultState();
                         world.setBlockState(setBlockPos, ceiling_torch);
+                        this.setDead();
                     } else if (face != DOWN) {
                         world.setBlockState(setBlockPos, torch_state.with(HORIZONTAL_FACING, face));
+                        this.setDead();
                     }
-                    this.setDead();
                 }
             }
         }

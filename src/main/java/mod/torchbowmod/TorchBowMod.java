@@ -56,10 +56,10 @@ public class TorchBowMod {
     }
 
     private void preInit(final FMLCommonSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void initClient(final FMLClientSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
         RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY, RenderTorch::new);
         torchBowModTab.createIcon();
         func_239418_a_(torchbow, new ResourceLocation("pull"), (itemStack, world, livingEntity) -> {
