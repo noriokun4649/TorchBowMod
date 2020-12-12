@@ -21,7 +21,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static net.minecraft.item.ItemModelsProperties.func_239418_a_;
+import static net.minecraft.item.ItemModelsProperties.registerProperty;
 
 @Mod(TorchBowMod.MODID)
 public class TorchBowMod {
@@ -62,14 +62,14 @@ public class TorchBowMod {
         MinecraftForge.EVENT_BUS.register(this);
         RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY, RenderTorch::new);
         torchBowModTab.createIcon();
-        func_239418_a_(torchbow, new ResourceLocation("pull"), (itemStack, world, livingEntity) -> {
+        registerProperty(torchbow, new ResourceLocation("pull"), (itemStack, world, livingEntity) -> {
             if (livingEntity == null) {
                 return 0.0F;
             } else {
                 return livingEntity.getActiveItemStack() != itemStack ? 0.0F : (float)(itemStack.getUseDuration() - livingEntity.getItemInUseCount()) / 20.0F;
             }
         });
-        func_239418_a_(torchbow, new ResourceLocation("pulling"), (itemStack, world, livingEntity)
+        registerProperty(torchbow, new ResourceLocation("pulling"), (itemStack, world, livingEntity)
                 -> livingEntity != null && livingEntity.isHandActive() && livingEntity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
     }
 
