@@ -1,4 +1,4 @@
 
-item.torchbow.name=松明弓
-itemGroup.TorchBowModTab=松明弓MOD
-death.attack.EntityTorch=%2$s身上插满了火把
+item.torchbow.name=火把弓
+itemGroup.TorchBowModTab=火把弓 Mod
+death.attack.EntityTorch=%2$s的身上插满了火把
