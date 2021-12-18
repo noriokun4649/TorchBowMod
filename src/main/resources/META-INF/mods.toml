@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[37,)"
 license="MIT License"
 
 [[mods]]
@@ -14,7 +14,7 @@ description="Adds a TorchBow."
 [[dependencies.torchbowmod]]
     modId="forge"
     mandatory=true
-    versionRange="[31,)"
+    versionRange="[37,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.torchbowmod]]
