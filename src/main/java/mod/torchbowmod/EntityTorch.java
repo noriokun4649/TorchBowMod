@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PlayMessages;
 
 import static mod.torchbowmod.TorchBowMod.CeilingTorch;
 import static mod.torchbowmod.TorchBowMod.TORCH_ENTITY;
@@ -28,7 +28,7 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class EntityTorch extends AbstractArrow {
 
-    public EntityTorch(FMLPlayMessages.SpawnEntity packet, Level worldIn﻿) {
+    public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn﻿) {
         super(TORCH_ENTITY, worldIn﻿);
     }
 
