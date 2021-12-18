@@ -1,18 +1,19 @@
 package mod.torchbowmod;
 
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -21,15 +22,13 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static net.minecraft.item.ItemModelsProperties.registerProperty;
-
 @Mod(TorchBowMod.MODID)
 public class TorchBowMod {
     public static final String MODID = "torchbowmod";
     public static Logger LOGGER = LogManager.getLogger("TorchBowMod");
-    public static ItemGroup torchBowModTab = (new ItemGroup("torchBowModTab") {
+    public static CreativeModeTab torchBowModTab = (new CreativeModeTab("torchBowModTab") {
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(torchbow);
         }
     });
@@ -42,10 +41,10 @@ public class TorchBowMod {
     public static Block CeilingTorch = null;
 
     public static Item torchbow = new TorchBow(new Item.Properties()
-            .group(torchBowModTab).defaultMaxDamage(384))
+            .tab(torchBowModTab).defaultDurability(384))
             .setRegistryName(new ResourceLocation(MODID, "torchbow"));
     public static Item multiTorch = new Item(new Item.Properties()
-            .group(torchBowModTab).maxStackSize(64))
+            .tab(torchBowModTab).stacksTo(64))
             .setRegistryName(new ResourceLocation(MODID, "multitorch"));
     public static EntityType<EntityTorch> TORCH_ENTITY;
 
@@ -60,17 +59,20 @@ public class TorchBowMod {
 
     private void initClient(final FMLClientSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        RenderingRegistry.registerEntityRenderingHandler(TORCH_ENTITY, RenderTorch::new);
-        torchBowModTab.createIcon();
-        registerProperty(torchbow, new ResourceLocation("pull"), (itemStack, world, livingEntity) -> {
-            if (livingEntity == null) {
-                return 0.0F;
-            } else {
-                return livingEntity.getActiveItemStack() != itemStack ? 0.0F : (float)(itemStack.getUseDuration() - livingEntity.getItemInUseCount()) / 20.0F;
-            }
+        torchBowModTab.makeIcon();
+        event.enqueueWork(() ->
+        {
+            ItemProperties.register(torchbow,
+                    new ResourceLocation("pull"), (itemStack, world, livingEntity, num) -> {
+                        if (livingEntity == null) {
+                            return 0.0F;
+                        } else {
+                            return livingEntity.getUseItem() != itemStack ? 0.0F : (float)(itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+                        }
+                    });
+            ItemProperties.register(torchbow,new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
+                    -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
         });
-        registerProperty(torchbow, new ResourceLocation("pulling"), (itemStack, world, livingEntity)
-                -> livingEntity != null && livingEntity.isHandActive() && livingEntity.getActiveItemStack() == itemStack ? 1.0F : 0.0F);
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -81,13 +83,19 @@ public class TorchBowMod {
         }
 
         @SubscribeEvent
+        public static void registerEntityRenderer(EntityRenderersEvent.RegisterRenderers event)
+        {
+            event.registerEntityRenderer(TORCH_ENTITY, RenderTorch::new);
+        }
+
+        @SubscribeEvent
         public static void registerEntityTypes(final RegistryEvent.Register<EntityType<?>> event) {
-            TORCH_ENTITY = EntityType.Builder.<EntityTorch>create(EntityTorch::new, EntityClassification.MISC)
+            TORCH_ENTITY = EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
                     .setCustomClientFactory(EntityTorch::new)
                     .setTrackingRange(60)
                     .setUpdateInterval(5)
                     .setShouldReceiveVelocityUpdates(true)
-                    .size(0.5F, 0.5F)
+                    .sized(0.5F, 0.5F)
                     .build(MODID + ":entitytorch");
             TORCH_ENTITY.setRegistryName(new ResourceLocation(MODID, "entitytorch"));
             event.getRegistry().register(TORCH_ENTITY);

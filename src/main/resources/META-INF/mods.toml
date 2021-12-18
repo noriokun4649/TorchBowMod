@@ -4,7 +4,7 @@ license="MIT License"
 
 [[mods]]
 modId="torchbowmod"
-version="1.4"
+version="1.0"
 displayName="TorchBowMod"
 updateJSONURL="https://raw.githubusercontent.com/noriokun4649/TorchBowMod/master/update.json"
 credits="noriokun4649"
@@ -20,6 +20,6 @@ description="Adds a TorchBow."
 [[dependencies.torchbowmod]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1, 1.16.4]"
+    versionRange="[1.17.1]"
     ordering="NONE"
     side="BOTH"
