@@ -31,11 +31,11 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
     private boolean binder;
     public static final Predicate<ItemStack> TORCH = (itemStack) -> {
         return itemStack.getItem() == Blocks.TORCH.asItem() ||
-                itemStack.getItem() == multiTorch ||
+                itemStack.getItem() == multiTorch.get() ||
                 (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateTagElement("TorchBandolier").getInt("Count") > 0) ||
                 (itemStack.getItem() == TorchBowMod.StorageBox &&
                         (ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
-                                ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch));
+                                ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch.get()));
     };
 
     public TorchBow(Item.Properties properties) {
@@ -81,7 +81,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
                 if ((double) f >= 0.1D) {
                     boolean flag1 = playerentity.getAbilities().invulnerable || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem) itemstack.getItem()).isInfinite(itemstack, stack, playerentity));
                     if (!worldIn.isClientSide) {
-                        boolean isMultitorch = itemstack.getItem() == multiTorch || (itemstack.getItem() == TorchBowMod.StorageBox && ItemStack.of(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch);
+                        boolean isMultitorch = itemstack.getItem() == multiTorch.get() || (itemstack.getItem() == TorchBowMod.StorageBox && ItemStack.of(itemstack.getTag().getCompound("StorageItemData")).getItem() == multiTorch.get());
                         shootTorch(playerentity, entityLiving, worldIn, itemstack, stack, flag1, f);
                         if (isMultitorch){
                             float size = 10f;
@@ -98,7 +98,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
                     worldIn.playSound((Player) entityLiving, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (worldIn.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!playerentity.getAbilities().invulnerable) {
-                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch) {
+                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch.get()) {
                             itemstack.shrink(1);
                             if (itemstack.isEmpty()) {
                                 playerentity.getInventory().removeItem(itemstack);
@@ -227,7 +227,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
             CompoundTag a = sitemstack.getTag().getCompound("StorageItemData");//StrageBoxに入ってるItemStackを取得
             Item itemname = ItemStack.of(a).getItem();//スロトレージBoxのなかのID取得
             Item itemid = new ItemStack(Blocks.TORCH).getItem();//対象のID取得
-            Item itemid2 = new ItemStack(multiTorch).getItem();
+            Item itemid2 = new ItemStack(multiTorch.get()).getItem();
             sitem = itemname == itemid || itemname == itemid2;
             if (sitem) {//同じ場合
                 ssize = sitemstack.getTag().getInt("StorageSize");//有効に

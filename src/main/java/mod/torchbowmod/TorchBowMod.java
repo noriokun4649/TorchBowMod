@@ -18,7 +18,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,9 +32,10 @@ public class TorchBowMod {
     public static CreativeModeTab torchBowModTab = (new CreativeModeTab("torchBowModTab") {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(torchbow);
+            return new ItemStack(torchbow.get());
         }
     });
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     @ObjectHolder("torchbandolier:torch_bandolier")
     public static Item torchbinder = null;
@@ -40,16 +44,15 @@ public class TorchBowMod {
     @ObjectHolder("ceilingtorch:torch")
     public static Block CeilingTorch = null;
 
-    public static Item torchbow = new TorchBow(new Item.Properties()
-            .tab(torchBowModTab).defaultDurability(384))
-            .setRegistryName(new ResourceLocation(MODID, "torchbow"));
-    public static Item multiTorch = new Item(new Item.Properties()
-            .tab(torchBowModTab).stacksTo(64))
-            .setRegistryName(new ResourceLocation(MODID, "multitorch"));
+    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties()
+            .tab(torchBowModTab).defaultDurability(384)));
+    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch",() -> new Item(new Item.Properties()
+            .tab(torchBowModTab).stacksTo(64)));
     public static EntityType<EntityTorch> TORCH_ENTITY;
 
     public TorchBowMod() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEMS.register(modEventBus);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::initClient);
     }
@@ -62,7 +65,7 @@ public class TorchBowMod {
         torchBowModTab.makeIcon();
         event.enqueueWork(() ->
         {
-            ItemProperties.register(torchbow,
+            ItemProperties.register(torchbow.get(),
                     new ResourceLocation("pull"), (itemStack, world, livingEntity, num) -> {
                         if (livingEntity == null) {
                             return 0.0F;
@@ -70,18 +73,13 @@ public class TorchBowMod {
                             return livingEntity.getUseItem() != itemStack ? 0.0F : (float)(itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
                         }
                     });
-            ItemProperties.register(torchbow,new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
+            ItemProperties.register(torchbow.get(),new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
                     -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
         });
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(torchbow, multiTorch);
-        }
-
         @SubscribeEvent
         public static void registerEntityRenderer(EntityRenderersEvent.RegisterRenderers event)
         {
