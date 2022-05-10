@@ -15,7 +15,7 @@ public class TorchArrow extends ArrowItem {
 
     @Override
     public AbstractArrow createArrow(Level level, ItemStack itemStack, LivingEntity livingEntity) {
-        EntityTorch torch = new EntityTorch(level, livingEntity);
+        EntityTorch torch = new EntityTorch(level, livingEntity, EntityTorch.EntityTorchMode.ARROW_STATE);
         return torch;
     }
 

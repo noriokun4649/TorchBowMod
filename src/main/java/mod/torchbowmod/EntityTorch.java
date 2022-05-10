@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -20,13 +21,17 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 
-import static mod.torchbowmod.TorchBowMod.CeilingTorch;
-import static mod.torchbowmod.TorchBowMod.TORCH_ENTITY;
+import static mod.torchbowmod.TorchBowMod.*;
 import static net.minecraft.core.Direction.DOWN;
 import static net.minecraft.core.Direction.UP;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class EntityTorch extends AbstractArrow {
+    enum EntityTorchMode{
+        TORCH_STATE,
+        ARROW_STATE
+    }
+    private EntityTorchMode state;
 
     public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn﻿) {
         super(TORCH_ENTITY, worldIn﻿);
@@ -40,8 +45,9 @@ public class EntityTorch extends AbstractArrow {
         super(TORCH_ENTITY, x, y, z, worldIn);
     }
 
-    public EntityTorch(Level worldIn, LivingEntity shooter) {
+    public EntityTorch(Level worldIn, LivingEntity shooter,EntityTorchMode mode) {
         super(TORCH_ENTITY, shooter, worldIn);
+        state = mode;
     }
 
     @Override
@@ -121,6 +127,9 @@ public class EntityTorch extends AbstractArrow {
 
     @Override
     protected ItemStack getPickupItem() {
-        return new ItemStack(Blocks.TORCH);
+        if(state == EntityTorchMode.TORCH_STATE){
+            return new ItemStack(Blocks.TORCH);
+        }
+        return new ItemStack(torchArrow.get());
     }
 }

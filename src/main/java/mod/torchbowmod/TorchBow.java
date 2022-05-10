@@ -20,6 +20,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import java.util.function.Predicate;
 
 import static mod.torchbowmod.TorchBowMod.multiTorch;
+import static mod.torchbowmod.TorchBowMod.torchArrow;
 import static net.minecraft.world.item.BowItem.getPowerForTime;
 
 public class TorchBow extends ProjectileWeaponItem implements Vanishable {
@@ -29,14 +30,14 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
     private boolean storageid;
 
     private boolean binder;
-    public static final Predicate<ItemStack> TORCH = (itemStack) -> {
-        return itemStack.getItem() == Blocks.TORCH.asItem() ||
-                itemStack.getItem() == multiTorch.get() ||
-                (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateTagElement("TorchBandolier").getInt("Count") > 0) ||
-                (itemStack.getItem() == TorchBowMod.StorageBox &&
-                        (ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
-                                ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch.get()));
-    };
+    public static final Predicate<ItemStack> TORCH = (itemStack) ->
+            itemStack.getItem() == torchArrow.get() ||
+            itemStack.getItem() == Blocks.TORCH.asItem() ||
+            itemStack.getItem() == multiTorch.get() ||
+            (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateTagElement("TorchBandolier").getInt("Count") > 0) ||
+            (itemStack.getItem() == TorchBowMod.StorageBox &&
+                    (ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
+                            ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch.get()));
 
     public TorchBow(Item.Properties properties) {
         super(properties);
@@ -98,7 +99,8 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
                     worldIn.playSound((Player) entityLiving, playerentity.getX(), playerentity.getY(), playerentity.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (worldIn.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                     if (!playerentity.getAbilities().invulnerable) {
-                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch.get()) {
+                        if (itemstack.getItem() == Blocks.TORCH.asItem() || itemstack.getItem() == multiTorch.get()
+                                || itemstack.getItem() == torchArrow.get()) {
                             itemstack.shrink(1);
                             if (itemstack.isEmpty()) {
                                 playerentity.getInventory().removeItem(itemstack);
@@ -136,7 +138,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
         private void shootTorch( Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f, float x,float y) {
 
-        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity);
+        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity,EntityTorch.EntityTorchMode.TORCH_STATE);
         abstractedly.shootFromRotation(entitle, entitle.getXRot() + x, entitle.getYRot() + y, 0.0F, f * 3.0F, 1.0F);
         if (f == 1.0F) {
             abstractedly.setCritArrow(true);
