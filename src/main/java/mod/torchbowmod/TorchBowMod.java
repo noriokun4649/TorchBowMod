@@ -48,6 +48,8 @@ public class TorchBowMod {
             .tab(torchBowModTab).defaultDurability(384)));
     public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch",() -> new Item(new Item.Properties()
             .tab(torchBowModTab).stacksTo(64)));
+    public static  RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties()
+            .tab(torchBowModTab).stacksTo(64)));
     public static EntityType<EntityTorch> TORCH_ENTITY;
 
     public TorchBowMod() {
