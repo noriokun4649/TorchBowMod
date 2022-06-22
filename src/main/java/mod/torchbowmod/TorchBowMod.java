@@ -11,17 +11,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,25 +32,35 @@ public class TorchBowMod {
         }
     });
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
 
-    @ObjectHolder("torchbandolier:torch_bandolier")
+    @ObjectHolder(registryName = "torchbandolier:torch_bandolier", value = "torch_bandolier")
     public static Item torchbinder = null;
-    @ObjectHolder("storagebox:storagebox")
+    @ObjectHolder(registryName = "storagebox:storagebox", value = "storagebox")
     public static Item StorageBox = null;
-    @ObjectHolder("ceilingtorch:torch")
+    @ObjectHolder(registryName = "ceilingtorch:torch", value = "ceilingtorch")
     public static Block CeilingTorch = null;
 
     public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties()
             .tab(torchBowModTab).defaultDurability(384)));
-    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch",() -> new Item(new Item.Properties()
+    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties()
             .tab(torchBowModTab).stacksTo(64)));
-    public static  RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties()
+    public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties()
             .tab(torchBowModTab).stacksTo(64)));
-    public static EntityType<EntityTorch> TORCH_ENTITY;
+
+    public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITIES.register("entitytorch", () ->
+            EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
+                    .setCustomClientFactory(EntityTorch::new)
+                    .setTrackingRange(60)
+                    .setUpdateInterval(5)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .sized(0.5F, 0.5F)
+                    .build(MODID + ":entitytorch"));
 
     public TorchBowMod() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
+        ENTITIES.register(modEventBus);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::initClient);
     }
@@ -72,10 +78,10 @@ public class TorchBowMod {
                         if (livingEntity == null) {
                             return 0.0F;
                         } else {
-                            return livingEntity.getUseItem() != itemStack ? 0.0F : (float)(itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+                            return livingEntity.getUseItem() != itemStack ? 0.0F : (float) (itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
                         }
                     });
-            ItemProperties.register(torchbow.get(),new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
+            ItemProperties.register(torchbow.get(), new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
                     -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
         });
     }
@@ -83,22 +89,8 @@ public class TorchBowMod {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void registerEntityRenderer(EntityRenderersEvent.RegisterRenderers event)
-        {
-            event.registerEntityRenderer(TORCH_ENTITY, RenderTorch::new);
-        }
-
-        @SubscribeEvent
-        public static void registerEntityTypes(final RegistryEvent.Register<EntityType<?>> event) {
-            TORCH_ENTITY = EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
-                    .setCustomClientFactory(EntityTorch::new)
-                    .setTrackingRange(60)
-                    .setUpdateInterval(5)
-                    .setShouldReceiveVelocityUpdates(true)
-                    .sized(0.5F, 0.5F)
-                    .build(MODID + ":entitytorch");
-            TORCH_ENTITY.setRegistryName(new ResourceLocation(MODID, "entitytorch"));
-            event.getRegistry().register(TORCH_ENTITY);
+        public static void registerEntityRenderer(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(entityTorch.get(), RenderTorch::new);
         }
     }
 

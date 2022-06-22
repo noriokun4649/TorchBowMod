@@ -34,7 +34,7 @@ public class EntityTorch extends AbstractArrow {
     private EntityTorchMode state;
 
     public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn﻿) {
-        super(TORCH_ENTITY, worldIn﻿);
+        super(entityTorch.get(), worldIn﻿);
     }
 
     public EntityTorch(EntityType<? extends EntityTorch> p_i50172_1_, Level p_i50172_2_) {
@@ -42,11 +42,11 @@ public class EntityTorch extends AbstractArrow {
     }
 
     public EntityTorch(Level worldIn, double x, double y, double z) {
-        super(TORCH_ENTITY, x, y, z, worldIn);
+        super(entityTorch.get(), x, y, z, worldIn);
     }
 
     public EntityTorch(Level worldIn, LivingEntity shooter,EntityTorchMode mode) {
-        super(TORCH_ENTITY, shooter, worldIn);
+        super(entityTorch.get(), shooter, worldIn);
         state = mode;
     }
 
