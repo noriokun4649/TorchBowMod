@@ -33,8 +33,8 @@ public class EntityTorch extends AbstractArrow {
     }
     private EntityTorchMode state;
 
-    public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn﻿) {
-        super(entityTorch.get(), worldIn﻿);
+    public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn) {
+        super(entityTorch.get(), worldIn);
     }
 
     public EntityTorch(EntityType<? extends EntityTorch> p_i50172_1_, Level p_i50172_2_) {
@@ -62,8 +62,7 @@ public class EntityTorch extends AbstractArrow {
         super.onHitBlock(raytraceResultIn);
         HitResult.Type raytraceresult$type = raytraceResultIn.getType();
         if (raytraceresult$type == HitResult.Type.BLOCK) {
-            BlockHitResult blockraytraceresult = raytraceResultIn;
-            setTorch(blockraytraceresult, raytraceResultIn);
+            setTorch(raytraceResultIn, raytraceResultIn);
         }
     }
 
@@ -98,21 +97,14 @@ public class EntityTorch extends AbstractArrow {
     }
 
     private BlockPos getPosOfFace(BlockPos blockPos, Direction face) {
-        switch (face) {
-            case UP:
-                return blockPos.above();
-            case EAST:
-                return blockPos.east();
-            case WEST:
-                return blockPos.west();
-            case SOUTH:
-                return blockPos.south();
-            case NORTH:
-                return blockPos.north();
-            case DOWN:
-                return blockPos.below();
-        }
-        return blockPos;
+        return switch (face) {
+            case UP -> blockPos.above();
+            case EAST -> blockPos.east();
+            case WEST -> blockPos.west();
+            case SOUTH -> blockPos.south();
+            case NORTH -> blockPos.north();
+            case DOWN -> blockPos.below();
+        };
     }
 
     private boolean isBlockAIR(BlockPos pos) {
