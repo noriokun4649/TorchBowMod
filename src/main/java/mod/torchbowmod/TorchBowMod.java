@@ -32,7 +32,7 @@ public class TorchBowMod {
         }
     });
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
 
     @ObjectHolder(registryName = "torchbandolier:torch_bandolier", value = "torch_bandolier")
     public static Item torchbinder = null;
@@ -48,7 +48,7 @@ public class TorchBowMod {
     public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties()
             .tab(torchBowModTab).stacksTo(64)));
 
-    public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITIES.register("entitytorch", () ->
+    public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITY_TYPES.register("entitytorch", () ->
             EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
                     .setCustomClientFactory(EntityTorch::new)
                     .setTrackingRange(60)
@@ -60,7 +60,7 @@ public class TorchBowMod {
     public TorchBowMod() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
-        ENTITIES.register(modEventBus);
+        ENTITY_TYPES.register(modEventBus);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::initClient);
     }
