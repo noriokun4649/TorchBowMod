@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+> **Warning**
+> This repository is for the Forge version; please open issues for the Fabric version in this repository.
+> https://github.com/noriokun4649/TorchBowMod-fabric
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -36,3 +40,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
+
+**May I reply in Japanese?**
+- [ ] No
+- [ ] はい大丈夫です
