@@ -91,10 +91,10 @@ public class TorchBowMod {
             event.registerCreativeModeTab(new ResourceLocation(MODID, "torchbowmodtab"), builder ->
                     builder.title(Component.translatable("itemGroup.torchBowModTab"))
                             .icon(() -> new ItemStack(torchbow.get()))
-                            .displayItems((enabledFlags, populator, hasPermissions) -> {
-                                populator.accept(torchbow.get());
-                                populator.accept(multiTorch.get());
-                                populator.accept(torchArrow.get());
+                            .displayItems((parameters,output) -> {
+                                output.accept(torchbow.get());
+                                output.accept(multiTorch.get());
+                                output.accept(torchArrow.get());
                             })
             );
         }
