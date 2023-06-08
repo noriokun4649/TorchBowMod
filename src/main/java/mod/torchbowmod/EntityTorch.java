@@ -73,22 +73,22 @@ public class EntityTorch extends AbstractArrow {
 
     private void setTorch(BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
         BlockPos blockpos = blockraytraceresult.getBlockPos();
-        if (!this.level.getBlockState(blockpos).isAir()) {
-            if (!level.isClientSide) {
+        if (!this.level().getBlockState(blockpos).isAir()) {
+            if (!level().isClientSide) {
                 Direction face = ((BlockHitResult) raytraceResultIn).getDirection();
                 BlockState torch_state = Blocks.WALL_TORCH.defaultBlockState();
                 BlockPos setBlockPos = getPosOfFace(blockpos, face);
                 if (isBlockAIR(setBlockPos)) {
                     if (face == UP) {
                         torch_state = Blocks.TORCH.defaultBlockState();
-                        level.setBlock(setBlockPos,torch_state,3);
+                        level().setBlock(setBlockPos,torch_state,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face == DOWN && CeilingTorch != null) {
                         BlockState ceiling_torch = CeilingTorch.defaultBlockState();
-                        level.setBlock(setBlockPos, ceiling_torch,3);
+                        level().setBlock(setBlockPos, ceiling_torch,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face != DOWN) {
-                        level.setBlock(setBlockPos, torch_state.setValue(HORIZONTAL_FACING, face), 3);
+                        level().setBlock(setBlockPos, torch_state.setValue(HORIZONTAL_FACING, face), 3);
                         this.remove(RemovalReason.KILLED);
                     }
                 }
@@ -108,7 +108,7 @@ public class EntityTorch extends AbstractArrow {
     }
 
     private boolean isBlockAIR(BlockPos pos) {
-        Block getBlock = this.level.getBlockState(pos).getBlock();
+        Block getBlock = this.level().getBlockState(pos).getBlock();
         if (getBlock instanceof BushBlock) return true;
         Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW, Blocks.VINE};//空気だとみなすブロックリスト
         for (Block traget : a) {
