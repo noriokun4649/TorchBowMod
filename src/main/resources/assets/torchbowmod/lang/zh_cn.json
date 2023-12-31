@@ -1,14 +1,15 @@
 {
-  "item.torchbowmod.torchbow": "松明弓",
+  "item.torchbowmod.torchbow": "火把弓",
   "item.torchbowmod.multitorch": "火把组",
-  "itemGroup.torchBowModTab": "松明弓MOD",
-  "death.attack.EntityTorch": "%1$s身上插满了火把！",
+  "item.torchbowmod.torcharrow": "火把箭",
+  "itemGroup.torchBowModTab": "火把弓模组",
+  "death.attack.EntityTorch": "%1$s被%2$s发射的火把刺死了。",
   "log.sb.check": "正在检测StorageBox是否安装……",
-  "log.sb.load": "检测到StorageBox已安装。已读取联动数据",
-  "log.sb.error": "无法读取StorageBox",
+  "log.sb.load": "检测到StorageBox已安装，加载完成。",
+  "log.sb.error": "StorageBox加载错误。",
   "log.sb.unload": "StorageBox没有安装。",
   "log.sg.check": "正在检测Silent's Gems是否安装……",
-  "log.sg.load": "检测到Silent's Gems已安装。已读取联动数据",
-  "log.sg.error": "无法读取Silent's Gems",
+  "log.sg.load": "检测到Silent's Gems已安装，加载完成。",
+  "log.sg.error": "Silent's Gems加载错误。",
   "log.sg.unload": "Silent's Gems没有安装。"
 }
