@@ -138,8 +138,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
         private void shootTorch( Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f, float x,float y) {
 
-        EntityTorch.EntityTorchMode entityTorchMode = itemstack.getItem() == torchArrow.get() ? EntityTorch.EntityTorchMode.ARROW_STATE : EntityTorch.EntityTorchMode.TORCH_STATE;
-        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity, entityTorchMode);
+        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity, itemstack.copyWithCount(1));
         abstractedly.shootFromRotation(entitle, entitle.getXRot() + x, entitle.getYRot() + y, 0.0F, f * 3.0F, 1.0F);
         if (f == 1.0F) {
             abstractedly.setCritArrow(true);

@@ -7,6 +7,8 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import static mod.torchbowmod.TorchBowMod.torchArrow;
+
 public class TorchArrow extends ArrowItem {
 
     public TorchArrow(Properties properties) {
@@ -15,7 +17,7 @@ public class TorchArrow extends ArrowItem {
 
     @Override
     public AbstractArrow createArrow(Level level, ItemStack itemStack, LivingEntity livingEntity) {
-        EntityTorch torch = new EntityTorch(level, livingEntity, EntityTorch.EntityTorchMode.ARROW_STATE);
+        EntityTorch torch = new EntityTorch(level, livingEntity, itemStack.copyWithCount(1));
         return torch;
     }
 

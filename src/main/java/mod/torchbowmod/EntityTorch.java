@@ -18,8 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PlayMessages;
+import net.minecraftforge.network.packets.SpawnEntity;
 
 import static mod.torchbowmod.TorchBowMod.*;
 import static net.minecraft.core.Direction.DOWN;
@@ -27,27 +26,17 @@ import static net.minecraft.core.Direction.UP;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class EntityTorch extends AbstractArrow {
-    enum EntityTorchMode{
-        TORCH_STATE,
-        ARROW_STATE
-    }
-    private EntityTorchMode state;
 
-    public EntityTorch(PlayMessages.SpawnEntity packet, Level worldIn) {
-        super(entityTorch.get(), worldIn);
+    public EntityTorch(SpawnEntity spawnEntity, Level level) {
+        this(entityTorch.get(), level);
     }
 
-    public EntityTorch(EntityType<? extends EntityTorch> p_i50172_1_, Level p_i50172_2_) {
-        super(p_i50172_1_, p_i50172_2_);
+    public EntityTorch(Level worldIn, LivingEntity shooter,ItemStack pickup) {
+        super(entityTorch.get(), shooter, worldIn,pickup);
     }
 
-    public EntityTorch(Level worldIn, double x, double y, double z) {
-        super(entityTorch.get(), x, y, z, worldIn);
-    }
-
-    public EntityTorch(Level worldIn, LivingEntity shooter,EntityTorchMode mode) {
-        super(entityTorch.get(), shooter, worldIn);
-        state = mode;
+    public EntityTorch(EntityType<EntityTorch> entityTorchEntityType, Level level) {
+        super(entityTorchEntityType,level,new ItemStack(Blocks.TORCH));
     }
 
     @Override
@@ -64,11 +53,6 @@ public class EntityTorch extends AbstractArrow {
         if (raytraceresult$type == HitResult.Type.BLOCK) {
             setTorch(raytraceResultIn, raytraceResultIn);
         }
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     private void setTorch(BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
@@ -117,11 +101,4 @@ public class EntityTorch extends AbstractArrow {
         return false;
     }
 
-    @Override
-    protected ItemStack getPickupItem() {
-        if(state == EntityTorchMode.TORCH_STATE){
-            return new ItemStack(Blocks.TORCH);
-        }
-        return new ItemStack(torchArrow.get());
-    }
 }
