@@ -3,8 +3,6 @@ package mod.torchbowmod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,7 +18,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.packets.SpawnEntity;
 
-import static mod.torchbowmod.TorchBowMod.*;
+import static mod.torchbowmod.TorchBowMod.CeilingTorch;
+import static mod.torchbowmod.TorchBowMod.entityTorch;
 import static net.minecraft.core.Direction.DOWN;
 import static net.minecraft.core.Direction.UP;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;

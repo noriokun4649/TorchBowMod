@@ -7,8 +7,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import static mod.torchbowmod.TorchBowMod.torchArrow;
-
 public class TorchArrow extends ArrowItem {
 
     public TorchArrow(Properties properties) {
