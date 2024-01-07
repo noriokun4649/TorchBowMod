@@ -30,14 +30,32 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
     private boolean storageid;
 
     private boolean binder;
-    public static final Predicate<ItemStack> TORCH = (itemStack) ->
-            itemStack.getItem() == torchArrow.get() ||
-            itemStack.getItem() == Blocks.TORCH.asItem() ||
-            itemStack.getItem() == multiTorch.get() ||
-            (itemStack.getItem() == TorchBowMod.torchbinder && itemStack.getOrCreateTagElement("TorchBandolier").getInt("Count") > 0) ||
-            (itemStack.getItem() == TorchBowMod.StorageBox &&
-                    (ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == Blocks.TORCH.asItem() ||
-                            ItemStack.of(itemStack.getTag().getCompound("StorageItemData")).getItem() == multiTorch.get()));
+    public static final Predicate<ItemStack> TORCH = itemStack -> itemStack.is(Blocks.TORCH.asItem());
+    public static final Predicate<ItemStack> MULTI_TORCH = itemStack -> itemStack.is(multiTorch.get());
+    public static final Predicate<ItemStack> TORCH_ARROW = itemStack -> itemStack.is(torchArrow.get());
+    public static final Predicate<ItemStack> TORCH_BINDER;
+    public static final Predicate<ItemStack> STORAGE_BOX;
+    public static final Predicate<ItemStack> TORCH_BOW_ONLY;
+
+
+    static {
+        STORAGE_BOX = itemStack -> {
+            if (itemStack.getTag() == null) return false;
+            var isStorageBox = itemStack.is(TorchBowMod.StorageBox);
+            var storageItem = ItemStack.of(itemStack.getTag().getCompound("StorageItemData"));
+            var containsTorch = storageItem.is(Blocks.TORCH.asItem());
+            var containsMultiTorch = storageItem.is(multiTorch.get());
+
+            return isStorageBox && (containsTorch || containsMultiTorch);
+        };
+
+        TORCH_BINDER = itemStack -> {
+            var isTorchBinder = itemStack.is(TorchBowMod.torchbinder);
+            var notEmpty = itemStack.getOrCreateTagElement("TorchBandolier").getInt("Count") > 0;
+            return isTorchBinder && notEmpty;
+        };
+        TORCH_BOW_ONLY = TORCH.or(MULTI_TORCH).or(TORCH_ARROW).or(TORCH_BINDER).or(STORAGE_BOX);
+    }
 
     public TorchBow(Item.Properties properties) {
         super(properties);
@@ -45,7 +63,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
     @Override
     public Predicate<ItemStack> getAllSupportedProjectiles() {
-        return TORCH;
+        return TORCH_BOW_ONLY;
     }
 
     @Override
@@ -55,7 +73,7 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
 
     @Override
     public boolean isValidRepairItem(ItemStack itemStack, ItemStack itemStack2) {
-        return itemStack2.getItem() == Items.FLINT_AND_STEEL || super.isValidRepairItem(itemStack, itemStack2);
+        return itemStack2.is(Items.FLINT_AND_STEEL) || super.isValidRepairItem(itemStack, itemStack2);
     }
 
     @Override
@@ -132,11 +150,11 @@ public class TorchBow extends ProjectileWeaponItem implements Vanishable {
         }
     }
 
-    private void shootTorch( Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
-        shootTorch(entitle,livingEntity,worldIn,itemstack,stack,flag1,f,0f,0f);
+    private void shootTorch(Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f) {
+        shootTorch(entitle, livingEntity, worldIn, itemstack, stack, flag1, f, 0f, 0f);
     }
 
-        private void shootTorch( Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f, float x,float y) {
+    private void shootTorch(Player entitle, LivingEntity livingEntity, Level worldIn, ItemStack itemstack, ItemStack stack, boolean flag1, float f, float x, float y) {
 
         EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity, itemstack.copyWithCount(1));
         abstractedly.shootFromRotation(entitle, entitle.getXRot() + x, entitle.getYRot() + y, 0.0F, f * 3.0F, 1.0F);
