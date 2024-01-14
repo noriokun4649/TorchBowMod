@@ -241,19 +241,15 @@ tasks.register('publishCurseForge', TaskPublishCurseForge) {
     mainFile.releaseType = releaseType
     mainFile.changelog = new File('./CHANGELOG.md').text
     mainFile.changelogType = 'markdown'
-}
 
-configure(publishCurseForge) {
     group = 'Publishing'
     description = 'Upload project to CurseForge'
 }
 
 tasks.register('publishModSites'){
-    publishCurseForge
-    modrinth
-}
+    dependsOn 'publishCurseForge'
+    dependsOn 'modrinth'
 
-configure(publishModSites) {
     group = 'Publishing'
     description = 'Upload project to CurseForge and Modrinth'
 }
