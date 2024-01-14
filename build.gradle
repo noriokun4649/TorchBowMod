@@ -1,15 +1,19 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'net.darkhax.curseforgegradle' version '1.+'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
-version = mod_version
+version = "v$project.mod_version"
 group = mod_group_id
 
 base {
-    archivesName = mod_id
+    archivesName = "$mod_name-$modloader_name-$minecraft_version"
 }
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -214,4 +218,42 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
+}
+
+def releaseType  = "release" // can also be `beta` or `alpha`
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "EYY4PWCG"
+    versionNumber = mod_version
+    versionType = releaseType
+    uploadFile = jar
+    gameVersions = [minecraft_version]
+    loaders = [modloader_name.toLowerCase()]
+    changelog = new File('./CHANGELOG.md').text
+    dependencies {
+    }
+}
+
+tasks.register('publishCurseForge', TaskPublishCurseForge) {
+    apiToken = System.getenv('CURSE_FORGE_TOKEN')
+    def mainFile = upload(289658, jar)
+    mainFile.releaseType = releaseType
+    mainFile.changelog = new File('./CHANGELOG.md').text
+    mainFile.changelogType = 'markdown'
+}
+
+configure(publishCurseForge) {
+    group = 'Publishing'
+    description = 'Upload project to CurseForge'
+}
+
+tasks.register('publishModSites'){
+    publishCurseForge
+    modrinth
+}
+
+configure(publishModSites) {
+    group = 'Publishing'
+    description = 'Upload project to CurseForge and Modrinth'
 }
