@@ -1,0 +1,2 @@
+- Change TorchEntity behavior
+- Add German language

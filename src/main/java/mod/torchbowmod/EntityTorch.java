@@ -5,7 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -22,6 +24,7 @@ import static mod.torchbowmod.TorchBowMod.CeilingTorch;
 import static mod.torchbowmod.TorchBowMod.entityTorch;
 import static net.minecraft.core.Direction.DOWN;
 import static net.minecraft.core.Direction.UP;
+import static net.minecraft.world.entity.EntityType.LIGHTNING_BOLT;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class EntityTorch extends AbstractArrow {
@@ -42,6 +45,9 @@ public class EntityTorch extends AbstractArrow {
     protected void onHitEntity(EntityHitResult entityRayTraceResult) {
         super.onHitEntity(entityRayTraceResult);
         Entity entity = entityRayTraceResult.getEntity();
+        if (entity instanceof Creeper creeper){
+            creeperIgnite(creeper);
+        }
         entity.setRemainingFireTicks(100);
     }
 
@@ -50,8 +56,34 @@ public class EntityTorch extends AbstractArrow {
         super.onHitBlock(raytraceResultIn);
         HitResult.Type raytraceresult$type = raytraceResultIn.getType();
         if (raytraceresult$type == HitResult.Type.BLOCK) {
-            setTorch(raytraceResultIn, raytraceResultIn);
+            var statePos = raytraceResultIn.getBlockPos();
+            if (level().getBlockState(statePos).getBlock() == Blocks.TNT){
+                tntIgnite(raytraceResultIn);
+            }else {
+                setTorch(raytraceResultIn, raytraceResultIn);
+            }
         }
+    }
+
+    private void creeperIgnite(Creeper creeper){
+        if (Math.random() < 0.05) {
+            creeper.ignite();
+            var bolt = new LightningBolt(LIGHTNING_BOLT, level());
+            bolt.setPos(creeper.getOnPos().getCenter());
+            level().addFreshEntity(bolt);
+        } else if (Math.random() < 0.3) {
+            creeper.ignite();
+        }
+    }
+
+    private void tntIgnite(BlockHitResult blockHitResult){
+        var world = level();
+        var blockPos = blockHitResult.getBlockPos();
+        var blockState = world.getBlockState(blockPos);
+        var block = blockState.getBlock();
+        block.onCaughtFire(blockState,world,blockPos,null,null);
+        world.removeBlock(blockPos, false);
+        this.remove(RemovalReason.KILLED);
     }
 
     private void setTorch(BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
