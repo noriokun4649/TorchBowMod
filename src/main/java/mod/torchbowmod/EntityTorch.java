@@ -65,6 +65,11 @@ public class EntityTorch extends AbstractArrow {
         }
     }
 
+    @Override
+    protected ItemStack getDefaultPickupItem() {
+        return new ItemStack(Blocks.TORCH);
+    }
+
     private void creeperIgnite(Creeper creeper){
         if (Math.random() < 0.05) {
             creeper.ignite();

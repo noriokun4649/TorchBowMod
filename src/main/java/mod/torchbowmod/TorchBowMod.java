@@ -35,14 +35,10 @@ public class TorchBowMod {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    @ObjectHolder(registryName = "torchbandolier:torch_bandolier", value = "torch_bandolier")
-    public static Item torchbinder = null;
-    @ObjectHolder(registryName = "storagebox:storagebox", value = "storagebox")
-    public static Item StorageBox = null;
     @ObjectHolder(registryName = "ceilingtorch:torch", value = "ceilingtorch")
     public static Block CeilingTorch = null;
 
-    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().defaultDurability(384)));
+    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().durability(384)));
     public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().stacksTo(64)));
     public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().stacksTo(64)));
     public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITY_TYPES.register("entitytorch", () ->

@@ -6,6 +6,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.projectile.AbstractArrow.Pickup;
 
 public class TorchArrow extends ArrowItem {
 
@@ -20,7 +21,7 @@ public class TorchArrow extends ArrowItem {
     }
 
     @Override
-    public boolean isInfinite(ItemStack stack, ItemStack bow, Player player) {
+    public boolean isInfinite(ItemStack stack, ItemStack bow, LivingEntity owner) {
         return false;
     }
 }
