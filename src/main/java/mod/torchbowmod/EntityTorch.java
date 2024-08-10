@@ -20,8 +20,9 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.packets.SpawnEntity;
 
-import static mod.torchbowmod.TorchBowMod.CeilingTorch;
-import static mod.torchbowmod.TorchBowMod.entityTorch;
+import javax.annotation.Nullable;
+
+import static mod.torchbowmod.TorchBowMod.*;
 import static net.minecraft.core.Direction.DOWN;
 import static net.minecraft.core.Direction.UP;
 import static net.minecraft.world.entity.EntityType.LIGHTNING_BOLT;
@@ -33,12 +34,12 @@ public class EntityTorch extends AbstractArrow {
         this(entityTorch.get(), level);
     }
 
-    public EntityTorch(Level worldIn, LivingEntity shooter,ItemStack pickup) {
-        super(entityTorch.get(), shooter, worldIn,pickup);
+    public EntityTorch(Level worldIn, LivingEntity shooter, ItemStack pickup, @Nullable ItemStack weaponStack) {
+        super(entityTorch.get(), shooter, worldIn,pickup, weaponStack);
     }
 
     public EntityTorch(EntityType<EntityTorch> entityTorchEntityType, Level level) {
-        super(entityTorchEntityType,level,new ItemStack(Blocks.TORCH));
+        super(entityTorchEntityType,level);
     }
 
     @Override

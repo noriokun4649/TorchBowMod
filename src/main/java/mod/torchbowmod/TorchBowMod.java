@@ -76,14 +76,14 @@ public class TorchBowMod {
         event.enqueueWork(() ->
         {
             ItemProperties.register(torchbow.get(),
-                    new ResourceLocation("pull"), (itemStack, world, livingEntity, num) -> {
+                    ResourceLocation.withDefaultNamespace("pull"), (itemStack, world, livingEntity, num) -> {
                         if (livingEntity == null) {
                             return 0.0F;
                         } else {
-                            return livingEntity.getUseItem() != itemStack ? 0.0F : (float) (itemStack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+                            return livingEntity.getUseItem() != itemStack ? 0.0F : (float) (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
                         }
                     });
-            ItemProperties.register(torchbow.get(), new ResourceLocation("pulling"), (itemStack, world, livingEntity, num)
+            ItemProperties.register(torchbow.get(), ResourceLocation.withDefaultNamespace("pulling"), (itemStack, world, livingEntity, num)
                     -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
         });
     }

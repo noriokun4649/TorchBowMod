@@ -1,2 +1,2 @@
-- Change TorchEntity behavior
-- Add German language
+- Update 1.20.6
+- Remove compatibility for StrageBox and TorchBinder

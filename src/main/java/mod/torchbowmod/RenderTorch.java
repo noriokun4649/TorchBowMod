@@ -8,7 +8,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderTorch extends ArrowRenderer<EntityTorch> {
-    private static final ResourceLocation TorchTextures = new ResourceLocation("torchbowmod:textures/entity/torch.png");
+    private static final ResourceLocation TorchTextures = ResourceLocation.fromNamespaceAndPath("torchbowmod","textures/entity/torch.png");
 
     public RenderTorch(EntityRendererProvider.Context renderManagerIn) {
         super(renderManagerIn);
