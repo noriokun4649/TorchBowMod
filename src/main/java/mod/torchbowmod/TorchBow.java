@@ -33,21 +33,13 @@ public class TorchBow extends ProjectileWeaponItem {
     public static final Predicate<ItemStack> TORCH_ARROW = itemStack -> itemStack.is(torchArrow.get());
     public static final Predicate<ItemStack> TORCH_BOW_ONLY;
 
-    private class Offsets {
-        private float X;
-        private float Y;
+    private static class Offsets {
+        private final float X;
+        private final float Y;
 
         Offsets(float x,float y){
             this.X = x;
             this.Y = y;
-        }
-
-        public float getX() {
-            return X;
-        }
-
-        public float getY() {
-            return Y;
         }
     }
 
@@ -55,8 +47,8 @@ public class TorchBow extends ProjectileWeaponItem {
         TORCH_BOW_ONLY = TORCH.or(MULTI_TORCH).or(TORCH_ARROW);
     }
 
-    public TorchBow(Item.Properties p_40660_) {
-        super(p_40660_);
+    public TorchBow(Item.Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -76,8 +68,9 @@ public class TorchBow extends ProjectileWeaponItem {
                     if (level instanceof ServerLevel) {
                         ServerLevel serverlevel = (ServerLevel)level;
                         if (!list.isEmpty()) {
-                            if (itemstack.is(multiTorch.get())){
-                                ItemStack item = itemstack.copy();
+                            ItemStack pickup = list.getFirst();
+                            if (pickup.is(multiTorch.get())){
+                                ItemStack item = pickup.copy();
                                 list.addAll(Collections.nCopies(8, item));
                             }
                             this.shoot(serverlevel, player, player.getUsedItemHand(), itemStack, list, f * 3.0F, 1.0F, f == 1.0F, (LivingEntity)null);
@@ -164,7 +157,7 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    protected Projectile createProjectile(Level worldIn, LivingEntity livingEntity, ItemStack weaponStack, ItemStack pickupItem, boolean p_336242_) {
+    protected Projectile createProjectile(Level worldIn, LivingEntity livingEntity, ItemStack weaponStack, ItemStack pickupItem, boolean b) {
         if (pickupItem.is(multiTorch.get())) pickupItem = Items.TORCH.getDefaultInstance();
         EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity, pickupItem.copyWithCount(1), weaponStack);
         return abstractedly;
