@@ -1,14 +1,12 @@
 {
-  "type": "crafting_shaped",
+  "type": "minecraft:crafting_shaped",
   "pattern": [
     "III",
     "III",
     "III"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:torch"
-    }
+    "I": "minecraft:torch"
   },
   "result": {
     "id": "torchbowmod:multitorch"

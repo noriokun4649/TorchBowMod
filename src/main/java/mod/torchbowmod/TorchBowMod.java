@@ -4,6 +4,7 @@ package mod.torchbowmod;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -38,9 +39,18 @@ public class TorchBowMod {
     @ObjectHolder(registryName = "ceilingtorch:torch", value = "ceilingtorch")
     public static Block CeilingTorch = null;
 
-    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().durability(384)));
-    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().stacksTo(64)));
-    public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().stacksTo(64)));
+    public static final ResourceLocation TORCH_BOW_ID = ResourceLocation.fromNamespaceAndPath(MODID, "torchbow");
+    public static final ResourceLocation MULCH_TORCH_ID = ResourceLocation.fromNamespaceAndPath(MODID, "multitorch");
+    public static final ResourceLocation TORCH_ARROW_ID = ResourceLocation.fromNamespaceAndPath(MODID, "torcharrow");
+    public static final ResourceLocation TORCH_ENTITY = ResourceLocation.fromNamespaceAndPath(MODID,"entitytorch");
+    public static final ResourceKey<Item> TORCH_BOW_KEY = ResourceKey.create(Registries.ITEM, TORCH_BOW_ID);
+    public static final ResourceKey<Item> MULCH_TORCH_KEY = ResourceKey.create(Registries.ITEM, MULCH_TORCH_ID);
+    public static final ResourceKey<Item> TORCH_ARROW_KEY = ResourceKey.create(Registries.ITEM, TORCH_ARROW_ID);
+    public static final ResourceKey<EntityType<?>> TORCH_ENTITY_ID = ResourceKey.create(Registries.ENTITY_TYPE, TORCH_ENTITY);
+    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().setId(TORCH_BOW_KEY).durability(384)));
+    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().setId(MULCH_TORCH_KEY).stacksTo(64)));
+    public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().setId(TORCH_ARROW_KEY).stacksTo(64)));
+
     public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITY_TYPES.register("entitytorch", () ->
             EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
                     .setCustomClientFactory(EntityTorch::new)
@@ -48,7 +58,7 @@ public class TorchBowMod {
                     .setUpdateInterval(5)
                     .setShouldReceiveVelocityUpdates(true)
                     .sized(0.5F, 0.5F)
-                    .build(MODID + ":entitytorch"));
+                    .build(TORCH_ENTITY_ID));
     public static RegistryObject<CreativeModeTab> torchTab = TAB.register("torchbowmodtab", () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.torchBowModTab"))
@@ -59,8 +69,8 @@ public class TorchBowMod {
                         output.accept(torchArrow.get());
                     }).build());
 
-    public TorchBowMod() {
-        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public TorchBowMod(FMLJavaModLoadingContext context) {
+        final IEventBus modEventBus = context.getModEventBus();
         ITEMS.register(modEventBus);
         ENTITY_TYPES.register(modEventBus);
         TAB.register(modEventBus);
