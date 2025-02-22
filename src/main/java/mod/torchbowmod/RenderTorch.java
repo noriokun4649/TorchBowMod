@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.entity.state.ArrowRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderTorch extends ArrowRenderer<EntityTorch, ArrowRenderState> {
@@ -16,12 +17,12 @@ public class RenderTorch extends ArrowRenderer<EntityTorch, ArrowRenderState> {
     }
 
     @Override
-    protected ResourceLocation getTextureLocation(ArrowRenderState arrowRenderState) {
+    protected @NotNull ResourceLocation getTextureLocation(@NotNull ArrowRenderState arrowRenderState) {
         return TorchTextures;
     }
 
     @Override
-    public ArrowRenderState createRenderState() {
+    public @NotNull ArrowRenderState createRenderState() {
         return new ArrowRenderState();
     }
 }

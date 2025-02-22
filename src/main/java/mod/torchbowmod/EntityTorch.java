@@ -19,6 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.packets.SpawnEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -43,7 +44,7 @@ public class EntityTorch extends AbstractArrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityRayTraceResult) {
+    protected void onHitEntity(@NotNull EntityHitResult entityRayTraceResult) {
         super.onHitEntity(entityRayTraceResult);
         Entity entity = entityRayTraceResult.getEntity();
         if (entity instanceof Creeper creeper){
@@ -53,7 +54,7 @@ public class EntityTorch extends AbstractArrow {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult raytraceResultIn) {
+    protected void onHitBlock(@NotNull BlockHitResult raytraceResultIn) {
         super.onHitBlock(raytraceResultIn);
         HitResult.Type raytraceresult$type = raytraceResultIn.getType();
         if (raytraceresult$type == HitResult.Type.BLOCK) {
@@ -67,7 +68,7 @@ public class EntityTorch extends AbstractArrow {
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() {
+    protected @NotNull ItemStack getDefaultPickupItem() {
         return new ItemStack(Blocks.TORCH);
     }
 
@@ -92,7 +93,7 @@ public class EntityTorch extends AbstractArrow {
         this.remove(RemovalReason.KILLED);
     }
 
-    private void setTorch(BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
+    private void setTorch(@NotNull BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
         BlockPos blockpos = blockraytraceresult.getBlockPos();
         if (!this.level().getBlockState(blockpos).isAir()) {
             if (!level().isClientSide) {
@@ -105,7 +106,7 @@ public class EntityTorch extends AbstractArrow {
                         level().setBlock(setBlockPos,torch_state,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face == DOWN && CeilingTorch != null) {
-                        BlockState ceiling_torch = CeilingTorch.defaultBlockState();
+                        BlockState ceiling_torch = CeilingTorch.get().defaultBlockState();
                         level().setBlock(setBlockPos, ceiling_torch,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face != DOWN) {
@@ -132,8 +133,8 @@ public class EntityTorch extends AbstractArrow {
         Block getBlock = this.level().getBlockState(pos).getBlock();
         if (getBlock instanceof BushBlock) return true;
         Block[] a = {Blocks.CAVE_AIR, Blocks.AIR, Blocks.SNOW, Blocks.VINE};//空気だとみなすブロックリスト
-        for (Block traget : a) {
-            if (getBlock == traget) return true;
+        for (Block target : a) {
+            if (getBlock == target) return true;
         }
         return false;
     }

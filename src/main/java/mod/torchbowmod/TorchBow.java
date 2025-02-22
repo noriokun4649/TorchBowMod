@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
-import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,38 +15,28 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.NotNull;
 
 import static mod.torchbowmod.TorchBowMod.multiTorch;
 import static mod.torchbowmod.TorchBowMod.torchArrow;
 
 public class TorchBow extends ProjectileWeaponItem {
-    public static final int MAX_DRAW_DURATION = 20;
-    public static final int DEFAULT_RANGE = 15;
 
     public static final Predicate<ItemStack> TORCH = itemStack -> itemStack.is(Blocks.TORCH.asItem());
     public static final Predicate<ItemStack> MULTI_TORCH = itemStack -> itemStack.is(multiTorch.get());
     public static final Predicate<ItemStack> TORCH_ARROW = itemStack -> itemStack.is(torchArrow.get());
     public static final Predicate<ItemStack> TORCH_BOW_ONLY;
 
-    private class Offsets {
-        private float X;
-        private float Y;
+    private static class Offsets {
+        private final float X;
+        private final float Y;
 
         Offsets(float x,float y){
             this.X = x;
             this.Y = y;
-        }
-
-        public float getX() {
-            return X;
-        }
-
-        public float getY() {
-            return Y;
         }
     }
 
@@ -60,7 +49,7 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity, int i1) {
+    public boolean releaseUsing(@NotNull ItemStack itemStack,@NotNull  Level level,@NotNull  LivingEntity livingEntity, int i1) {
         if (!(livingEntity instanceof Player player)) {
             return false;
         } else {
@@ -103,21 +92,21 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    protected void shootProjectile(LivingEntity livingEntity, Projectile projectile, int i, float v, float v1, float v2, @Nullable LivingEntity livingEntity1) {
+    protected void shootProjectile(@NotNull LivingEntity livingEntity,@NotNull  Projectile projectile, int i, float v, float v1, float v2, @Nullable LivingEntity livingEntity1) {
         float offsetX = 0F;
         float offsetY = 0F;
         if (i < 9){
             float range = 10F;
             Offsets[] offsets = {
-                new Offsets(0F,0F),
-                new Offsets(-range, -range),
-                new Offsets(-range, 0.0F),
-                new Offsets(-range, range),
-                new Offsets(0.0F, -range),
-                new Offsets(0.0F, range),
-                new Offsets(range, -range),
-                new Offsets(range, 0.0F),
-                new Offsets(range, range)
+                    new Offsets(0F, 0F),
+                    new Offsets(-range, -range),
+                    new Offsets(-range, 0.0F),
+                    new Offsets(-range, range),
+                    new Offsets(0.0F, -range),
+                    new Offsets(0.0F, range),
+                    new Offsets(range, -range),
+                    new Offsets(range, 0.0F),
+                    new Offsets(range, range)
             };
             offsetX = offsets[i].X;
             offsetY = offsets[i].Y;
@@ -136,17 +125,17 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
+    public int getUseDuration(@NotNull ItemStack itemStack, @NotNull LivingEntity livingEntity) {
         return 72000;
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack itemStack) {
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack itemStack) {
         return ItemUseAnimation.BOW;
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack itemstack = player.getItemInHand(interactionHand);
         boolean flag = !player.getProjectile(itemstack).isEmpty();
         var ret = ForgeEventFactory.onArrowNock(itemstack, level, player, interactionHand, flag);
@@ -160,7 +149,7 @@ public class TorchBow extends ProjectileWeaponItem {
         }
     }
 
-    public Predicate<ItemStack> getAllSupportedProjectiles() {
+    public @NotNull Predicate<ItemStack> getAllSupportedProjectiles() {
         return TORCH_BOW_ONLY;
     }
 
@@ -169,9 +158,8 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    protected Projectile createProjectile(Level worldIn, LivingEntity livingEntity, ItemStack weaponStack, ItemStack pickupItem, boolean p_336242_) {
+    protected @NotNull Projectile createProjectile(@NotNull Level worldIn, @NotNull LivingEntity livingEntity, @NotNull ItemStack weaponStack, ItemStack pickupItem, boolean p_336242_) {
         if (pickupItem.is(multiTorch.get())) pickupItem = Items.TORCH.getDefaultInstance();
-        EntityTorch abstractedly = new EntityTorch(worldIn, livingEntity, pickupItem.copyWithCount(1), weaponStack);
-        return abstractedly;
+        return new EntityTorch(worldIn, livingEntity, pickupItem.copyWithCount(1), weaponStack);
     }
 }
