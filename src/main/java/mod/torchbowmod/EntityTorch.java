@@ -105,7 +105,7 @@ public class EntityTorch extends AbstractArrow {
                         torch_state = Blocks.TORCH.defaultBlockState();
                         level().setBlock(setBlockPos,torch_state,3);
                         this.remove(RemovalReason.KILLED);
-                    } else if (face == DOWN && CeilingTorch != null) {
+                    } else if (face == DOWN && CeilingTorch.isPresent()) {
                         BlockState ceiling_torch = CeilingTorch.get().defaultBlockState();
                         level().setBlock(setBlockPos, ceiling_torch,3);
                         this.remove(RemovalReason.KILLED);
