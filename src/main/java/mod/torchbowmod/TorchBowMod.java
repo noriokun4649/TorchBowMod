@@ -12,8 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -53,11 +52,11 @@ public class TorchBowMod {
                     }).build());
 
     public TorchBowMod(FMLJavaModLoadingContext context) {
-        final IEventBus modEventBus = context.getModEventBus();
-        ITEMS.register(modEventBus);
-        ENTITY_TYPES.register(modEventBus);
-        TAB.register(modEventBus);
-        modEventBus.addListener(this::preInit);
+        var modBusGroup = context.getModBusGroup();
+        ITEMS.register(modBusGroup);
+        ENTITY_TYPES.register(modBusGroup);
+        TAB.register(modBusGroup);
+        FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::preInit);
     }
 
     private void preInit(final FMLCommonSetupEvent event) {
