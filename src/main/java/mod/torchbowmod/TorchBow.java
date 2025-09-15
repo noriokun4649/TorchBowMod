@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -49,22 +50,16 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    public boolean releaseUsing(@NotNull ItemStack itemStack,@NotNull  Level level,@NotNull  LivingEntity livingEntity, int i1) {
-        if (!(livingEntity instanceof Player player)) {
-            return false;
-        } else {
+    public void releaseUsing(@NotNull ItemStack itemStack, @NotNull Level level, @NotNull LivingEntity livingEntity, int i1) {
+        if (livingEntity instanceof Player player) {
             ItemStack itemstack = player.getProjectile(itemStack);
-            if (itemstack.isEmpty()) {
-                return false;
-            } else {
+            if (!itemstack.isEmpty()) {
                 int i = this.getUseDuration(itemStack, livingEntity) - i1;
                 i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(itemStack, level, player, i, true);
-                if (i < 0) return false;
+                if (i < 0) return;
 
                 float f = getPowerForTime(i);
-                if ((double)f < 0.1) {
-                    return false;
-                } else {
+                if (!((double)f < 0.1)) {
                     List<ItemStack> list = draw(itemStack, itemstack, player);
                     if (level instanceof ServerLevel serverlevel && !list.isEmpty()) {
                         if (list.getFirst().is(multiTorch.get())){
@@ -85,7 +80,6 @@ public class TorchBow extends ProjectileWeaponItem {
                             1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F
                     );
                     player.awardStat(Stats.ITEM_USED.get(this));
-                    return true;
                 }
             }
         }
@@ -130,22 +124,21 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack itemStack) {
-        return ItemUseAnimation.BOW;
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack itemStack) {
+        return UseAnim.BOW;
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
+    public InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack itemstack = player.getItemInHand(interactionHand);
         boolean flag = !player.getProjectile(itemstack).isEmpty();
         var ret = ForgeEventFactory.onArrowNock(itemstack, level, player, interactionHand, flag);
-        if (ret != null) {
-            return ret;
-        } else if (!player.hasInfiniteMaterials() && !flag) {
-            return InteractionResult.FAIL;
+        if (ret != null) return ret;
+        if (!player.hasInfiniteMaterials() && !flag) {
+            return InteractionResultHolder.fail(itemstack);
         } else {
             player.startUsingItem(interactionHand);
-            return InteractionResult.CONSUME;
+            return InteractionResultHolder.consume(itemstack);
         }
     }
 

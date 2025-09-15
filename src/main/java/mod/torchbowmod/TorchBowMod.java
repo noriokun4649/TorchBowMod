@@ -1,5 +1,6 @@
 package mod.torchbowmod;
 
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,9 +31,9 @@ public class TorchBowMod {
     private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static RegistryObject<Block> CeilingTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "torch"), ForgeRegistries.BLOCKS);
-    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().setId(ITEMS.key("torchbow")).durability(384)));
-    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().setId(ITEMS.key("multitorch")).stacksTo(64)));
-    public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().setId(ITEMS.key("torcharrow")).stacksTo(64)));
+    public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().durability(384)));
+    public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().stacksTo(64)));
+    public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().stacksTo(64)));
 
     public static RegistryObject<EntityType<EntityTorch>> entityTorch = ENTITY_TYPES.register("entitytorch", () ->
             EntityType.Builder.<EntityTorch>of(EntityTorch::new, MobCategory.MISC)
@@ -41,7 +42,7 @@ public class TorchBowMod {
                     .setUpdateInterval(5)
                     .setShouldReceiveVelocityUpdates(true)
                     .sized(0.5F, 0.5F)
-                    .build(ENTITY_TYPES.key("entitytorch")));
+                    .build("entitytorch"));
     public static RegistryObject<CreativeModeTab> torchTab = TAB.register("torchbowmodtab", () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.torchBowModTab"))
@@ -68,7 +69,19 @@ public class TorchBowMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            event.enqueueWork(() ->
+            {
+                ItemProperties.register(torchbow.get(),
+                        ResourceLocation.withDefaultNamespace("pull"), (itemStack, world, livingEntity, num) -> {
+                            if (livingEntity == null) {
+                                return 0.0F;
+                            } else {
+                                return livingEntity.getUseItem() != itemStack ? 0.0F : (float) (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+                            }
+                        });
+                ItemProperties.register(torchbow.get(), ResourceLocation.withDefaultNamespace("pulling"), (itemStack, world, livingEntity, num)
+                        -> livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F);
+            });
         }
     }
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
