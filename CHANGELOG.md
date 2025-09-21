@@ -1,1 +1,6 @@
-- Update 1.21.1
+- Changed: TorchBowMod now automatically supports torch items whose blocks extend `WallTorchBlock`.
+- Added: Auto-discovery status of torch items is now logged at startup.
+- Changed: The projectile render now uses the appearance of the corresponding torch block.
+- Verified with the following mods:
+    - Adorn (Stone Torch)
+    - More Beautiful Torches (all except Redstone Torch)
