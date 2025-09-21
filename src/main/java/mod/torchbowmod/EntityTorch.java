@@ -156,10 +156,10 @@ public class EntityTorch extends AbstractArrow {
         return Blocks.TORCH.defaultBlockState();
     }
     private BlockState getCeilingBlockState(BlockState state){
-        if (CeilingTorch == null) return Blocks.WALL_TORCH.defaultBlockState();
+        if (CeilingTorch == Blocks.AIR) return Blocks.WALL_TORCH.defaultBlockState();
         var CEILING_MAP = Map.of(
-                Blocks.WALL_TORCH, CeilingTorch.get(),
-                Blocks.SOUL_WALL_TORCH, CeilingSoulTorch.get()
+                Blocks.WALL_TORCH, CeilingTorch,
+                Blocks.SOUL_WALL_TORCH, CeilingSoulTorch
         );
         return CEILING_MAP.getOrDefault(state.getBlock(), Blocks.WALL_TORCH).defaultBlockState();
     }
@@ -186,7 +186,7 @@ public class EntityTorch extends AbstractArrow {
     }
 
     private boolean isVanillaTorch(BlockState state){
-        if (CeilingTorch == null) return false;
+        if (CeilingTorch == Blocks.AIR) return false;
         var vanillaTorch = Set.of(Blocks.WALL_TORCH, Blocks.SOUL_WALL_TORCH);
         return vanillaTorch.contains(state.getBlock());
     }

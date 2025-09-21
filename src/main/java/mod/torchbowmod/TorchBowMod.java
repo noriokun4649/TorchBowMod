@@ -41,8 +41,8 @@ public class TorchBowMod {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static RegistryObject<Block> CeilingTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "torch"), ForgeRegistries.BLOCKS);
-    public static RegistryObject<Block> CeilingSoulTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "soul_torch"), ForgeRegistries.BLOCKS);
+    public static Block CeilingTorch = null;
+    public static Block CeilingSoulTorch = null;
     public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().durability(384)));
     public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().stacksTo(64)));
     public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().stacksTo(64)));
@@ -76,6 +76,8 @@ public class TorchBowMod {
     }
 
     private void preInit(final FMLCommonSetupEvent event) {
+        CeilingTorch = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "torch"));
+        CeilingSoulTorch = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "soul_torch"));
         Map<String, Integer> modCountMap = new HashMap<>();
         ForgeRegistries.BLOCKS.getValues().stream()
                 .filter(block -> block instanceof WallTorchBlock)
