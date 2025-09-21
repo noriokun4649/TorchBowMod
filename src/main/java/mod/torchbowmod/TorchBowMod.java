@@ -57,15 +57,6 @@ public class TorchBowMod {
                     .setShouldReceiveVelocityUpdates(true)
                     .sized(0.5F, 0.5F)
                     .build("entitytorch"));
-    public static RegistryObject<CreativeModeTab> torchTab = TAB.register("torchbowmodtab", () ->
-            CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.torchBowModTab"))
-                    .icon(() -> new ItemStack(torchbow.get()))
-                    .displayItems((parameters,output) -> {
-                        output.accept(torchbow.get());
-                        output.accept(multiTorch.get());
-                        output.accept(torchArrow.get());
-                    }).build());
 
     public TorchBowMod(FMLJavaModLoadingContext context) {
         final IEventBus modEventBus = context.getModEventBus();
@@ -73,6 +64,15 @@ public class TorchBowMod {
         ENTITY_TYPES.register(modEventBus);
         TAB.register(modEventBus);
         modEventBus.addListener(this::preInit);
+        TAB.register("torchbowmodtab", () ->
+                CreativeModeTab.builder()
+                        .title(Component.translatable("itemGroup.torchBowModTab"))
+                        .icon(() -> new ItemStack(torchbow.get()))
+                        .displayItems((parameters,output) -> {
+                            output.accept(torchbow.get());
+                            output.accept(multiTorch.get());
+                            output.accept(torchArrow.get());
+                        }).build());
     }
 
     private void preInit(final FMLCommonSetupEvent event) {

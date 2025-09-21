@@ -131,7 +131,7 @@ public class TorchBow extends ProjectileWeaponItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand interactionHand) {
         ItemStack itemstack = player.getItemInHand(interactionHand);
         boolean flag = !player.getProjectile(itemstack).isEmpty();
         var ret = ForgeEventFactory.onArrowNock(itemstack, level, player, interactionHand, flag);
