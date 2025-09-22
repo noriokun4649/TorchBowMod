@@ -3,12 +3,16 @@ package mod.torchbowmod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import java.util.Map;
+import java.util.Set;
+
 import static mod.torchbowmod.TorchBowMod.*;
 import static net.minecraft.core.Direction.DOWN;
 import static net.minecraft.core.Direction.UP;
@@ -30,6 +37,8 @@ import static net.minecraft.world.entity.EntityType.LIGHTNING_BOLT;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class EntityTorch extends AbstractArrow {
+    private static final EntityDataAccessor<ItemStack> TORCH_ITEM =
+            SynchedEntityData.defineId(EntityTorch.class, EntityDataSerializers.ITEM_STACK);
 
     public EntityTorch(SpawnEntity spawnEntity, Level level) {
         this(entityTorch.get(), level);
@@ -37,6 +46,7 @@ public class EntityTorch extends AbstractArrow {
 
     public EntityTorch(Level worldIn, LivingEntity shooter, ItemStack pickup, @Nullable ItemStack weaponStack) {
         super(entityTorch.get(), shooter, worldIn,pickup, weaponStack);
+        this.entityData.set(TORCH_ITEM, pickup);
     }
 
     public EntityTorch(EntityType<EntityTorch> entityTorchEntityType, Level level) {
@@ -44,11 +54,29 @@ public class EntityTorch extends AbstractArrow {
     }
 
     @Override
+    protected void setPickupItemStack(@NotNull ItemStack pickupItemStack) {
+        super.setPickupItemStack(pickupItemStack);
+        this.entityData.set(TORCH_ITEM, pickupItemStack);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TORCH_ITEM, this.getDefaultPickupItem());
+    }
+
+
+    @Override
     protected void onHitEntity(@NotNull EntityHitResult entityRayTraceResult) {
         super.onHitEntity(entityRayTraceResult);
         Entity entity = entityRayTraceResult.getEntity();
         if (entity instanceof Creeper creeper){
             creeperIgnite(creeper);
+        }
+        if (entity instanceof LivingEntity livingentity) {
+            if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
+                livingentity.setArrowCount(livingentity.getArrowCount() - 1);
+            }
         }
         entity.setRemainingFireTicks(100);
     }
@@ -98,25 +126,46 @@ public class EntityTorch extends AbstractArrow {
         if (!this.level().getBlockState(blockpos).isAir()) {
             if (!level().isClientSide) {
                 Direction face = ((BlockHitResult) raytraceResultIn).getDirection();
-                BlockState torch_state = Blocks.WALL_TORCH.defaultBlockState();
+                BlockState wallBlockState = getWallBlockState();
                 BlockPos setBlockPos = getPosOfFace(blockpos, face);
                 if (isBlockAIR(setBlockPos)) {
                     if (face == UP) {
-                        torch_state = Blocks.TORCH.defaultBlockState();
-                        level().setBlock(setBlockPos,torch_state,3);
+                        level().setBlock(setBlockPos,getBlockState(),3);
                         this.remove(RemovalReason.KILLED);
-                    } else if (face == DOWN && CeilingTorch.isPresent()) {
+                    } else if (face == DOWN && isVanillaTorch(wallBlockState)) {
                         BlockState ceiling_torch = CeilingTorch.get().defaultBlockState();
                         level().setBlock(setBlockPos, ceiling_torch,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face != DOWN) {
-                        level().setBlock(setBlockPos, torch_state.setValue(HORIZONTAL_FACING, face), 3);
+                        level().setBlock(setBlockPos, wallBlockState.setValue(HORIZONTAL_FACING, face), 3);
                         this.remove(RemovalReason.KILLED);
                     }
                 }
             }
         }
     }
+
+    private BlockState getWallBlockState(){
+        if (this.getPickupItem().getItem() instanceof BlockItem blockItem){
+            return ITEM_TO_WALL_BLOCK.get(blockItem).defaultBlockState();
+        }
+        return Blocks.WALL_TORCH.defaultBlockState();
+    }
+    private BlockState getBlockState(){
+        if (this.getPickupItem().getItem() instanceof BlockItem blockItem){
+            return blockItem.getBlock().defaultBlockState();
+        }
+        return Blocks.TORCH.defaultBlockState();
+    }
+    private BlockState getCeilingBlockState(BlockState state){
+        if (CeilingTorch.isPresent()) return Blocks.WALL_TORCH.defaultBlockState();
+        var CEILING_MAP = Map.of(
+                Blocks.WALL_TORCH, CeilingTorch.get(),
+                Blocks.SOUL_WALL_TORCH, CeilingSoulTorch.get()
+        );
+        return CEILING_MAP.getOrDefault(state.getBlock(), Blocks.WALL_TORCH).defaultBlockState();
+    }
+
 
     private BlockPos getPosOfFace(BlockPos blockPos, Direction face) {
         return switch (face) {
@@ -138,5 +187,16 @@ public class EntityTorch extends AbstractArrow {
         }
         return false;
     }
+
+    private boolean isVanillaTorch(BlockState state){
+        if (CeilingTorch.isPresent()) return false;
+        var vanillaTorch = Set.of(Blocks.WALL_TORCH, Blocks.SOUL_WALL_TORCH);
+        return vanillaTorch.contains(state.getBlock());
+    }
+
+    public ItemStack getTorchItem(){
+        return this.entityData.get(TORCH_ITEM);
+    }
+
 
 }

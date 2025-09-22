@@ -1,14 +1,17 @@
 package mod.torchbowmod;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -22,6 +25,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.mojang.text2speech.Narrator.LOGGER;
+import static mod.torchbowmod.TorchBow.TORCH_ITEMS;
+
 @Mod(TorchBowMod.MODID)
 public class TorchBowMod {
     public static final String MODID = "torchbowmod";
@@ -30,6 +39,7 @@ public class TorchBowMod {
     private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static RegistryObject<Block> CeilingTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "torch"), ForgeRegistries.BLOCKS);
+    public static RegistryObject<Block> CeilingSoulTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "soul_torch"), ForgeRegistries.BLOCKS);
     public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().setId(ITEMS.key("torchbow")).durability(384)));
     public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().setId(ITEMS.key("multitorch")).stacksTo(64)));
     public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().setId(ITEMS.key("torcharrow")).stacksTo(64)));
@@ -42,15 +52,8 @@ public class TorchBowMod {
                     .setShouldReceiveVelocityUpdates(true)
                     .sized(0.5F, 0.5F)
                     .build(ENTITY_TYPES.key("entitytorch")));
-    public static RegistryObject<CreativeModeTab> torchTab = TAB.register("torchbowmodtab", () ->
-            CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.torchBowModTab"))
-                    .icon(() -> new ItemStack(torchbow.get()))
-                    .displayItems((parameters,output) -> {
-                        output.accept(torchbow.get());
-                        output.accept(multiTorch.get());
-                        output.accept(torchArrow.get());
-                    }).build());
+
+    public static final Map<BlockItem, WallTorchBlock> ITEM_TO_WALL_BLOCK = new HashMap<>();
 
     public TorchBowMod(FMLJavaModLoadingContext context) {
         final IEventBus modEventBus = context.getModEventBus();
@@ -58,9 +61,38 @@ public class TorchBowMod {
         ENTITY_TYPES.register(modEventBus);
         TAB.register(modEventBus);
         modEventBus.addListener(this::preInit);
+        TAB.register("torchbowmodtab", () ->
+                CreativeModeTab.builder()
+                        .title(Component.translatable("itemGroup.torchBowModTab"))
+                        .icon(() -> new ItemStack(torchbow.get()))
+                        .displayItems((parameters,output) -> {
+                            output.accept(torchbow.get());
+                            output.accept(multiTorch.get());
+                            output.accept(torchArrow.get());
+                        }).build());
     }
 
     private void preInit(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+        Map<String, Integer> modCountMap = new HashMap<>();
+        for (Block block : BuiltInRegistries.BLOCK) {
+            if (block instanceof WallTorchBlock wallBlock) {
+                Item asItem = block.asItem();
+                if (asItem instanceof BlockItem blockItem) {
+                    ITEM_TO_WALL_BLOCK.put(blockItem, wallBlock);
+                    TORCH_ITEMS.add(blockItem);
+                    String namespace = BuiltInRegistries.ITEM.getKey(asItem).getNamespace();
+                    modCountMap.merge(namespace, 1, Integer::sum);
+                }
+            }
+        }
+        LOGGER.info("==== TorchBowMod Torch Item Auto-Registration Stats ====");
+        LOGGER.info("Total registered pairs: {}", ITEM_TO_WALL_BLOCK.size());
+        for (Map.Entry<String, Integer> entry : modCountMap.entrySet()) {
+            LOGGER.info("Namespace '{}' has {} torch items", entry.getKey(), entry.getValue());
+        }
+        LOGGER.info("========================================================");
+    });
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
