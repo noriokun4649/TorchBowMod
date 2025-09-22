@@ -55,7 +55,6 @@ public class TorchBow extends ProjectileWeaponItem {
         if (livingEntity instanceof Player player) {
             ItemStack itemstack = player.getProjectile(itemStack);
             if (!itemstack.isEmpty()) {
-                if(!(itemstack.getItem() instanceof BlockItem)) itemstack = Blocks.TORCH.asItem().getDefaultInstance();
                 int i = this.getUseDuration(itemStack, livingEntity) - i1;
                 i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(itemStack, level, player, i, true);
                 if (i < 0) return;
