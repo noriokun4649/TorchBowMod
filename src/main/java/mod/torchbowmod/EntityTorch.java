@@ -26,7 +26,6 @@ import net.minecraftforge.network.packets.SpawnEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -133,7 +132,7 @@ public class EntityTorch extends AbstractArrow {
                         level().setBlock(setBlockPos,getBlockState(),3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face == DOWN && isVanillaTorch(wallBlockState)) {
-                        BlockState ceiling_torch = CeilingTorch.get().defaultBlockState();
+                        BlockState ceiling_torch = getCeilingBlockState(wallBlockState);
                         level().setBlock(setBlockPos, ceiling_torch,3);
                         this.remove(RemovalReason.KILLED);
                     } else if (face != DOWN) {

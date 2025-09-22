@@ -32,12 +32,12 @@ public class RenderTorch extends ArrowRenderer<EntityTorch, TorchRenderState> {
     }
 
     @Override
-    public TorchRenderState createRenderState() {
+    public @NotNull TorchRenderState createRenderState() {
         return new TorchRenderState();
     }
 
     @Override
-    public void extractRenderState(EntityTorch entityTorch, TorchRenderState torchRenderState, float partialTick) {
+    public void extractRenderState(@NotNull EntityTorch entityTorch, @NotNull TorchRenderState torchRenderState, float partialTick) {
         super.extractRenderState(entityTorch, torchRenderState, partialTick);
         if(entityTorch.getTorchItem().getItem() instanceof BlockItem blockItem){
             torchRenderState.blockState = blockItem.getBlock().defaultBlockState();
@@ -47,7 +47,7 @@ public class RenderTorch extends ArrowRenderer<EntityTorch, TorchRenderState> {
     }
 
     @Override
-    protected ResourceLocation getTextureLocation(TorchRenderState renderState) {
+    protected @NotNull ResourceLocation getTextureLocation(@NotNull TorchRenderState renderState) {
         return TorchTextures;
     }
 
