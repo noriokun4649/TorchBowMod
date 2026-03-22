@@ -3,7 +3,7 @@ package mod.torchbowmod;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -38,8 +37,8 @@ public class TorchBowMod {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final DeferredRegister<CreativeModeTab> TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static RegistryObject<Block> CeilingTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "torch"), ForgeRegistries.BLOCKS);
-    public static RegistryObject<Block> CeilingSoulTorch = RegistryObject.create(ResourceLocation.fromNamespaceAndPath("ceilingtorch", "soul_torch"), ForgeRegistries.BLOCKS);
+    public static RegistryObject<Block> CeilingTorch = RegistryObject.create(Identifier.fromNamespaceAndPath("ceilingtorch", "torch"), ForgeRegistries.BLOCKS);
+    public static RegistryObject<Block> CeilingSoulTorch = RegistryObject.create(Identifier.fromNamespaceAndPath("ceilingtorch", "soul_torch"), ForgeRegistries.BLOCKS);
     public static RegistryObject<Item> torchbow = ITEMS.register("torchbow", () -> new TorchBow(new Item.Properties().setId(ITEMS.key("torchbow")).durability(384)));
     public static RegistryObject<Item> multiTorch = ITEMS.register("multitorch", () -> new Item(new Item.Properties().setId(ITEMS.key("multitorch")).stacksTo(64)));
     public static RegistryObject<Item> torchArrow = ITEMS.register("torcharrow", () -> new TorchArrow(new Item.Properties().setId(ITEMS.key("torcharrow")).stacksTo(64)));
@@ -56,11 +55,11 @@ public class TorchBowMod {
     public static final Map<BlockItem, WallTorchBlock> ITEM_TO_WALL_BLOCK = new HashMap<>();
 
     public TorchBowMod(FMLJavaModLoadingContext context) {
-        final IEventBus modEventBus = context.getModEventBus();
-        ITEMS.register(modEventBus);
-        ENTITY_TYPES.register(modEventBus);
-        TAB.register(modEventBus);
-        modEventBus.addListener(this::preInit);
+        var modBusGroup = context.getModBusGroup();
+        ITEMS.register(modBusGroup);
+        ENTITY_TYPES.register(modBusGroup);
+        TAB.register(modBusGroup);
+        FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::preInit);
         TAB.register("torchbowmodtab", () ->
                 CreativeModeTab.builder()
                         .title(Component.translatable("itemGroup.torchBowModTab"))
@@ -95,15 +94,7 @@ public class TorchBowMod {
     });
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-
-        }
-    }
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class RegistryEvents {
         @SubscribeEvent
         public static void registerEntityRenderer(EntityRenderersEvent.RegisterRenderers event) {

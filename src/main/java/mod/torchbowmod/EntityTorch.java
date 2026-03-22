@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -73,7 +73,7 @@ public class EntityTorch extends AbstractArrow {
             creeperIgnite(creeper);
         }
         if (entity instanceof LivingEntity livingentity) {
-            if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
+            if (!this.level().isClientSide() && this.getPierceLevel() <= 0) {
                 livingentity.setArrowCount(livingentity.getArrowCount() - 1);
             }
         }
@@ -123,7 +123,7 @@ public class EntityTorch extends AbstractArrow {
     private void setTorch(@NotNull BlockHitResult blockraytraceresult, HitResult raytraceResultIn) {
         BlockPos blockpos = blockraytraceresult.getBlockPos();
         if (!this.level().getBlockState(blockpos).isAir()) {
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 Direction face = ((BlockHitResult) raytraceResultIn).getDirection();
                 BlockState wallBlockState = getWallBlockState();
                 BlockPos setBlockPos = getPosOfFace(blockpos, face);
