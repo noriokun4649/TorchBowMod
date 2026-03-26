@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
     id 'net.darkhax.curseforgegradle' version '1.+'
     id "com.modrinth.minotaur" version "2.+"
 }
@@ -12,8 +12,12 @@ plugins {
 version = "v$project.mod_version"
 group = mod_group_id
 
-// Mojang ships Java 21 to end users in 1.20.5+, so your mod should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+base {
+    archivesName = "$mod_name-$modloader_name-$minecraft_version"
+}
+
+// Mojang ships Java 25 to end users in 26.1+, so your mod should target Java 25.
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 // Include generated resources
 sourceSets.main.resources { srcDir 'src/generated/resources' }

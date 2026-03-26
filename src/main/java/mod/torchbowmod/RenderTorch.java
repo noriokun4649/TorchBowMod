@@ -3,9 +3,11 @@ package mod.torchbowmod;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.MovingBlockRenderState;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
@@ -15,7 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+
 public class RenderTorch extends ArrowRenderer<@NotNull EntityTorch, @NotNull TorchRenderState> {
     private static final Identifier TorchTextures = Identifier.fromNamespaceAndPath("torchbowmod","textures/entity/torch.png");
 
@@ -54,7 +56,9 @@ public class RenderTorch extends ArrowRenderer<@NotNull EntityTorch, @NotNull To
             poseStack.translate(-0.5, 0, 0.5);
         }
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-        submitNodeCollector.submitBlock(poseStack,blockState,torchRenderState.lightCoords,OverlayTexture.NO_OVERLAY,torchRenderState.outlineColor);
+        MovingBlockRenderState movingBlockRenderState = new MovingBlockRenderState();
+        movingBlockRenderState.blockState = blockState;
+        submitNodeCollector.submitMovingBlock(poseStack,movingBlockRenderState);
         poseStack.popPose();
     }
 }
