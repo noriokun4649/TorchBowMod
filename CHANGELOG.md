@@ -1,2 +1,1 @@
-- Update 1.21.11
-- Fix crash for under side block hit.
+- Fixed a bug that prevented it from being used on the server.
