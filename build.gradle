@@ -44,6 +44,10 @@ minecraft {
     }
 }
 
+base {
+    archivesName = "$mod_name-$modloader_name-$minecraft_version"
+}
+
 
 repositories {
     minecraft.mavenizer(it) // In Kotlin, it = this
