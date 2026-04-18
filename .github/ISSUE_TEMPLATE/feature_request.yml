@@ -23,9 +23,9 @@ body:
       description: Which mod loader are you using?
       options:
         - Forge
+        - NeoForge
         - Fabric
         - Quilt
-        - Other
     validations:
       required: true
 
